@@ -1,0 +1,67 @@
+# Entornos virtuales y Python
+.venv/
+venv/
+ENV/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+
+# Archivos del sistema y del editor
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+.vscode/
+.idea/
+.gemini/
+
+# Credenciales, llaves y secretos (evita filtraciones)
+.env
+.env.*
+*.env
+*.pem
+*.key
+*.token
+*.pfx
+*.p12
+credentials.json
+client_secret*.json
+id_rsa*
+id_ed25519*
+secrets/
+
+# Archivos comprimidos generales
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Datos pesados de fuentes (Subtema 1 ~580 MB)
+# C1: Insumos de INEGI (cartografía y extremos climáticos pesados)
+subtema_1_precipitacion/datos/01_INEGI/*
+!subtema_1_precipitacion/datos/01_INEGI/.gitkeep
+
+# C4: PDFs pesados del Geoportal / Ayuntamiento
+subtema_1_precipitacion/datos/04_GeoPortal_Merida/*.pdf
+!subtema_1_precipitacion/datos/04_GeoPortal_Merida/.gitkeep
+
+# C8: Modelos digitales de elevación / LiDAR de INEGI (rásteres pesados)
+subtema_1_precipitacion/datos/08_LiDAR/*
+!subtema_1_precipitacion/datos/08_LiDAR/README.md
+!subtema_1_precipitacion/datos/08_LiDAR/indice_cartas_merida.csv
+
+# Fuentes excluidas fuera de las 9 categorías (NOAA, ERA5, CHIRPS, IBTrACS, etc.)
+subtema_1_precipitacion/datos/_excluidas_fuera_de_categorias/
+
+# Archivos temporales de compilación LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
