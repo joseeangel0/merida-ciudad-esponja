@@ -98,7 +98,7 @@ Límites que conviene tener presentes:
 - No hay datos de 2023, y los de 2018–2022 (anexo PDF) y 2024–2026 (XLS) vienen de entregas distintas; no se pueden comparar sin cuidado.
 - El Ayuntamiento declaró que **no existen** registros de pluviómetros municipales ni un listado de puntos de encharcamiento recurrente.
 - PROCIVY solo entregó desde octubre de 2024 y sus fechas venían en texto libre; un registro con año 2027 se conservó sin corregir y se marcó.
-- C5.1 (CONAGUA): la información existe pero aún no se recoge (CD con pago de derechos); no hay datos de esa respuesta en el repositorio.
+- C5.1 (CONAGUA): la información existe pero el equipo decidió no recogerla (CD con pago de derechos); no hay datos de esa respuesta en el repositorio.
 - Los originales con datos personales no están en el repositorio; su huella SHA-256 está en `05_Solicitudes_gobierno/respuestas_pnt_procedencia.csv`.
 
 ## Procedencia

@@ -252,7 +252,7 @@ def documentar_todo():
         "Fuente: respuestas a las solicitudes de acceso a la información enviadas el 01-oct-2026 por la PNT a CONAGUA (C5.1), el Ayuntamiento de Mérida (C5.2) y PROCIVY (C5.3). "
         "Procesamiento: `scripts/procesar_pnt.py`. En `respuestas/` están las cartas oficiales (sin metadatos). "
         "**Los Excel y PDF originales del Ayuntamiento traen nombre, teléfono, dirección y coordenadas de los solicitantes y NO se publican**: aquí solo hay conteos por día, por mes y AGEB, y por colonia. "
-        "Su huella SHA-256 está en `respuestas_pnt_procedencia.csv`. C5.1 (CONAGUA) respondió que tiene los datos pero solo los entrega en CD con pago de derechos de reproducción; aún no se recogen. "
+        "Su huella SHA-256 está en `respuestas_pnt_procedencia.csv`. C5.1 (CONAGUA) respondió que tiene los datos pero solo los entrega en un CD con pago de derechos de reproducción; el equipo decidió no recogerlos. "
         "Controles y límites: [`../REPORTE_CALIDAD.md`](../REPORTE_CALIDAD.md).",
         ["- `ayuntamiento_reportes_drenaje_dia.csv` y `ayuntamiento_reportes_drenaje_ageb_mes.csv` vienen del mismo XLS (2024–oct-2026); la primera conserva el canal de llegada y la segunda la ubicación por AGEB.",
          "- `origen = trabajo_programado` son programas del propio Ayuntamiento (sin coordenadas ni relación con la lluvia); para ligar reportes con lluvia hay que usar `origen = solicitud`.",
@@ -398,7 +398,7 @@ def reporte():
           "- No hay datos de 2023, y los de 2018–2022 (anexo PDF) y 2024–2026 (XLS) vienen de entregas distintas; no se pueden comparar sin cuidado.",
           "- El Ayuntamiento declaró que **no existen** registros de pluviómetros municipales ni un listado de puntos de encharcamiento recurrente.",
           "- PROCIVY solo entregó desde octubre de 2024 y sus fechas venían en texto libre; un registro con año 2027 se conservó sin corregir y se marcó.",
-          "- C5.1 (CONAGUA): la información existe pero aún no se recoge (CD con pago de derechos); no hay datos de esa respuesta en el repositorio.",
+          "- C5.1 (CONAGUA): la información existe pero el equipo decidió no recogerla (CD con pago de derechos); no hay datos de esa respuesta en el repositorio.",
           "- Los originales con datos personales no están en el repositorio; su huella SHA-256 está en `05_Solicitudes_gobierno/respuestas_pnt_procedencia.csv`.\n",
           "## Procedencia",
           "Cada fuente y archivo está en [`MANIFIESTO_FUENTES.csv`](MANIFIESTO_FUENTES.csv) y [`MANIFIESTO_ARCHIVOS.csv`](MANIFIESTO_ARCHIVOS.csv) "

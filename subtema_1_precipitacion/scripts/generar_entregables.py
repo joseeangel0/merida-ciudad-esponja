@@ -332,7 +332,7 @@ matriz_rows = "\n".join(
     rf"\textbf{{{c} {tex(n)}}} & " + " & ".join(f"{f['id']} {tex(corto(f['nombre']))}" for f in FUENTES if f["cat"] == c) + r" \\ \midrule"
     for c, n, _ in CATEGORIAS)
 
-estado_n = {k: sum(f["estado"].startswith(k) for f in FUENTES) for k in ["Descargado", "Generado", "Script", "Pendiente", "Documentado", "Parcial"]}
+estado_n = {k: sum(f["estado"].startswith(k) for f in FUENTES) for k in ["Descargado", "Generado", "Script", "Pendiente", "Documentado", "Parcial", "Descartado"]}
 visrows = "\n".join(rf"{v[0]} & {tex(v[1])} & {tex(v[2])} & {tex(v[3])} \\" for v in VISUALIZACIONES)
 
 ev = eventos[eventos.estacion.isin(["31044", "31097", "31036", "31095"])].drop_duplicates("fecha").head(12)
@@ -392,7 +392,7 @@ documento = rf"""\documentclass[11pt,a4paper]{{article}}
 \begin{{itemize}}[leftmargin=1.2em,itemsep=2pt]
 \item \textbf{{27 fuentes}} en las 9 categorías del proyecto, 3 por categoría. De ellas, {con_datos} ya tienen datos en la carpeta
   (descargados, generados por nosotros o con script y muestra de scraping), {estado_n['Parcial'] + estado_n['Documentado']} solo se pueden consultar en línea
-  y {estado_n['Pendiente']} está pendiente de recoger (C5.1: CONAGUA respondió que tiene los datos horarios y los entrega en CD por \$13 MXN).
+  y {estado_n['Descartado']} no se recogió (C5.1: CONAGUA respondió que tiene la lluvia horaria, pero solo la entrega en un CD de \$13 MXN y el equipo decidió no recogerlo).
 \item \textbf{{Cuánto llueve:}} unos \textbf{{{clim_tot:,.0f} mm al año}} en el centro de Mérida (estación 31044, promedio 1991–2020).
 \item \textbf{{Cuándo llueve:}} el \textbf{{{pct_lluvias:.0f}\%}} cae de mayo a octubre, con picos en junio ({clim.promedio_mm[5]:.0f} mm)
   y septiembre ({clim.promedio_mm[8]:.0f} mm). Julio baja a {clim.promedio_mm[6]:.0f} mm (canícula).
@@ -516,7 +516,7 @@ Los círculos son las estaciones del SMN con al menos 10 años completos; el nú
 
 \section{{Pendientes}}
 \begin{{enumerate}}[leftmargin=1.4em,itemsep=2pt]
-\item Recoger el CD de CONAGUA (C5.1) con la lluvia diaria y horaria de las estaciones de Mérida (\$13 MXN de derechos de reproducción) y procesarlo.
+\item C5.1 (CONAGUA): la lluvia diaria y horaria de las estaciones de Mérida existe, pero no se recogió (CD de \$13 MXN en Ciudad de México). Sigue siendo la vía si se necesita intensidad horaria.
 \item Programar el scraping del SMN (C6.1) para que corra cada semana y vaya acumulando la serie de intensidad.
 \item El tablero de Power BI de SIEGY (C3.3) y las capas del Geoportal de Mérida (C4.1) solo se pueden consultar en línea.
 \end{{enumerate}}

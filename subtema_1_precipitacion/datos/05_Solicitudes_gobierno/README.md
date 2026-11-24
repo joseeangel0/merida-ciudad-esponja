@@ -2,7 +2,7 @@
 
 Generado el 2026-11-24 por `scripts/generar_documentacion.py`. Responsable: Equipo 1 (Diego Loria, Rama Marin, José Ángel Pech).
 
-Fuente: respuestas a las solicitudes de acceso a la información enviadas el 01-oct-2026 por la PNT a CONAGUA (C5.1), el Ayuntamiento de Mérida (C5.2) y PROCIVY (C5.3). Procesamiento: `scripts/procesar_pnt.py`. En `respuestas/` están las cartas oficiales (sin metadatos). **Los Excel y PDF originales del Ayuntamiento traen nombre, teléfono, dirección y coordenadas de los solicitantes y NO se publican**: aquí solo hay conteos por día, por mes y AGEB, y por colonia. Su huella SHA-256 está en `respuestas_pnt_procedencia.csv`. C5.1 (CONAGUA) respondió que tiene los datos pero solo los entrega en CD con pago de derechos de reproducción; aún no se recogen. Controles y límites: [`../REPORTE_CALIDAD.md`](../REPORTE_CALIDAD.md).
+Fuente: respuestas a las solicitudes de acceso a la información enviadas el 01-oct-2026 por la PNT a CONAGUA (C5.1), el Ayuntamiento de Mérida (C5.2) y PROCIVY (C5.3). Procesamiento: `scripts/procesar_pnt.py`. En `respuestas/` están las cartas oficiales (sin metadatos). **Los Excel y PDF originales del Ayuntamiento traen nombre, teléfono, dirección y coordenadas de los solicitantes y NO se publican**: aquí solo hay conteos por día, por mes y AGEB, y por colonia. Su huella SHA-256 está en `respuestas_pnt_procedencia.csv`. C5.1 (CONAGUA) respondió que tiene los datos pero solo los entrega en un CD con pago de derechos de reproducción; el equipo decidió no recogerlos. Controles y límites: [`../REPORTE_CALIDAD.md`](../REPORTE_CALIDAD.md).
 
 ## Resumen de tablas
 

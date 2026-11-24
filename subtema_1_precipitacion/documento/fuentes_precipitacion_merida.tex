@@ -38,7 +38,7 @@
 \begin{itemize}[leftmargin=1.2em,itemsep=2pt]
 \item \textbf{27 fuentes} en las 9 categorías del proyecto, 3 por categoría. De ellas, 24 ya tienen datos en la carpeta
   (descargados, generados por nosotros o con script y muestra de scraping), 2 solo se pueden consultar en línea
-  y 1 está pendiente de recoger (C5.1: CONAGUA respondió que tiene los datos horarios y los entrega en CD por \$13 MXN).
+  y 1 no se recogió (C5.1: CONAGUA respondió que tiene la lluvia horaria, pero solo la entrega en un CD de \$13 MXN y el equipo decidió no recogerlo).
 \item \textbf{Cuánto llueve:} unos \textbf{1,065 mm al año} en el centro de Mérida (estación 31044, promedio 1991–2020).
 \item \textbf{Cuándo llueve:} el \textbf{82\%} cae de mayo a octubre, con picos en junio (184 mm)
   y septiembre (181 mm). Julio baja a 132 mm (canícula).
@@ -263,9 +263,9 @@ Qué contiene & Respuesta: lluvia diaria y horaria del Observatorio de Mérida (
 Periodo · resolución & Desde el inicio de operación de cada estación · Diaria y horaria, puntual \\
 Formato · acceso & ZIP + Excel (por su peso se entrega en CD o por SEPOMEX) · Respuesta recibida el 30-oct-2026; la entrega requiere pagar derechos de reproducción (\$13 MXN) \\
 Confiabilidad & Alta \\
-Limitaciones & Los archivos no caben en la PNT: hay que pagar el CD y recogerlo en Ciudad de México (con cita) o pedir envío con costo. No calcularon los máximos de 1 h y 24 h; se derivan de los datos entregados. \\
+Limitaciones & Los archivos no caben en la PNT: solo se entregan en un CD de \$13 MXN (en Ciudad de México, con cita) o por envío con costo. El equipo decidió no recogerlos, así que no hay datos de esta fuente. Tampoco calcularon los máximos de 1 h y 24 h. \\
 Uso propuesto & Intensidad (mm/h): la variable que realmente explica los encharcamientos. Es la única fuente de lluvia horaria de las estaciones de Mérida. \\
-Estado & Pendiente: respuesta recibida (folio 340009400252326, 30-oct-2026); datos por recoger (CD, \$13 MXN) · {\small\nolinkurl{respuestas/C5.1_conagua_340009400252326_respuesta.pdf}} \\
+Estado & Descartado: respuesta recibida (folio 340009400252326, 30-oct-2026); el equipo decidió no recoger los datos (CD de \$13 MXN) · {\small\nolinkurl{respuestas/C5.1_conagua_340009400252326_respuesta.pdf}} \\
 Enlace & \url{https://www.plataformadetransparencia.org.mx/} \\
 \end{tabularx}
 \end{ficha}
@@ -583,7 +583,7 @@ Los círculos son las estaciones del SMN con al menos 10 años completos; el nú
 
 \section{Pendientes}
 \begin{enumerate}[leftmargin=1.4em,itemsep=2pt]
-\item Recoger el CD de CONAGUA (C5.1) con la lluvia diaria y horaria de las estaciones de Mérida (\$13 MXN de derechos de reproducción) y procesarlo.
+\item C5.1 (CONAGUA): la lluvia diaria y horaria de las estaciones de Mérida existe, pero no se recogió (CD de \$13 MXN en Ciudad de México). Sigue siendo la vía si se necesita intensidad horaria.
 \item Programar el scraping del SMN (C6.1) para que corra cada semana y vaya acumulando la serie de intensidad.
 \item El tablero de Power BI de SIEGY (C3.3) y las capas del Geoportal de Mérida (C4.1) solo se pueden consultar en línea.
 \end{enumerate}

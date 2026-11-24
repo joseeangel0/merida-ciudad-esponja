@@ -38,7 +38,7 @@ cd ../documento && tectonic fuentes_precipitacion_merida.tex     # .tex -> PDF
 Para agregar o editar una fuente, modifica `scripts/fuentes.py`; de ahí salen el Excel y el PDF.
 
 ## Pendientes
-1. **C5.1 (CONAGUA):** respondió el 30-oct-2026 que tiene la lluvia diaria y horaria del Observatorio de Mérida y de las estaciones «Mérida» y «Mérida CONAGUA», pero solo la entrega en CD ($13 MXN de derechos de reproducción, con cita en Ciudad de México) o por SEPOMEX. Hay que recogerla y procesarla.
+1. **C5.1 (CONAGUA), sin datos:** respondió el 30-oct-2026 que tiene la lluvia diaria y horaria del Observatorio de Mérida y de las estaciones «Mérida» y «Mérida CONAGUA», pero solo la entrega en CD ($13 MXN de derechos de reproducción, con cita en Ciudad de México) o por SEPOMEX. El equipo decidió no recogerla: no hay datos de esta fuente. Es la vía si más adelante se necesita lluvia horaria.
 2. Programar el scraping del SMN para que corra cada semana (las estaciones automáticas solo guardan 90 días). Hoy C6 solo tiene muestras.
 3. Tablero de Power BI de C3.3 y capas del Geoportal de Mérida (C4.1): solo se pueden consultar en línea.
 4. Los reportes de drenaje del Ayuntamiento no incluyen 2023.
