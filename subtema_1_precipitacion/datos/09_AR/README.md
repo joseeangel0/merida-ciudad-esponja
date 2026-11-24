@@ -9,3 +9,5 @@
 Las alturas derivadas son una estimación: el MDS/MDT de INEGI es fotogramétrico y la vegetación sobre los techos las infla.
 Para RA de inundación: cota de lámina = cota_terreno_mdt_m + tirante simulado (p. ej. 0.215 m si toda la lluvia de 24 h
 de Cristóbal 2020 se acumulara sin infiltrar, que es un caso extremo y no realista en karst).
+
+Nota: del GeoJSON de OSM se eliminaron las etiquetas `phone` y `email` (contactos de negocios) porque no se usan en el proyecto.
