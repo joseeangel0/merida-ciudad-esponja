@@ -6,6 +6,7 @@ Pregunta: **¿Cómo se distribuye la lluvia en Mérida y cómo ha cambiado con e
 |---|---|
 | Documento: matriz 9×3, fichas, hallazgos y visualizaciones | `documento/fuentes_precipitacion_merida.pdf` (fuente LaTeX: `.tex`) |
 | Catálogo de las 27 fuentes y tablas resumen | `catalogo_fuentes_precipitacion_merida.xlsx` |
+| Dashboard interactivo (HTML, sin servidor) | `dashboard/index.html` |
 | Datos, una carpeta por categoría | `datos/01_INEGI` … `datos/09_AR` |
 
 ## Las 9 categorías (3 fuentes cada una)
@@ -25,14 +26,16 @@ Pregunta: **¿Cómo se distribuye la lluvia en Mérida y cómo ha cambiado con e
 ## Regenerar todo
 ```bash
 python3 -m venv .venv && .venv/bin/pip install -r scripts/requirements.txt
-.venv/bin/python scripts/procesar_datos.py                       # SMN -> datos/07_Datos_propios/
+.venv/bin/python scripts/procesar_datos.py                       # SMN -> datos/07_Datos_propios/ (ceros espurios -> sin dato)
+.venv/bin/python scripts/generar_csv_dashboard.py                # CSV mensual + dashboard/data.js
+.venv/bin/python scripts/descargar_nasa_lidar.py               # NASA GEDI/ICESat-2 -> datos/08_LiDAR/NASA_GEDI_ICESat2/ (cuenta Earthdata)
 cd scripts && ../.venv/bin/python generar_entregables.py         # figuras + Excel + .tex
 cd ../documento && tectonic fuentes_precipitacion_merida.tex     # .tex -> PDF
 ```
 Para agregar o editar una fuente, modifica `scripts/fuentes.py`; de ahí salen el Excel y el PDF.
 
 ## Pendientes
-1. Enviar las 3 solicitudes de información (`datos/05_Solicitudes_gobierno/solicitudes_sugeridas.md`).
-2. Programar el scraping del SMN para que corra cada semana (las estaciones automáticas solo guardan 90 días).
-3. Opcional: crear una cuenta en NASA Earthdata para descargar GEDI/ICESat-2 (único LiDAR real sobre Mérida).
-4. Conectar `datos/07_Datos_propios/` con `merida_ciudad_esponja_prototipo.html`.
+1. **C5 (solicitudes PNT, enviadas el 01-oct-2026):** sin respuestas registradas al 24-nov-2026; el equipo las da por descartadas. Los folios y su seguimiento siguen en `datos/05_Solicitudes_gobierno/`.
+2. Programar el scraping del SMN para que corra cada semana (las estaciones automáticas solo guardan 90 días). Hoy C6 solo tiene muestras.
+3. Decidir cómo queda la matriz 9×3 con C5 y C8.3 (NASA) descartadas.
+4. Tablero de Power BI de C3.3 y capas del Geoportal de Mérida (C4.1): solo se pueden consultar en línea.
