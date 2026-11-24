@@ -96,6 +96,16 @@
   footer a { color: var(--accent); }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   .dim { opacity: .55; transition: opacity .15s; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0 0 6px; font-size: 13px; color: var(--text-secondary); }
+  .legend .lg { display: inline-flex; align-items: center; gap: 6px; }
+  .legend .lg i { width: 16px; height: 3px; border-radius: 2px; }
+  .foot { margin: 8px 0 0; color: var(--text-muted); font-size: 12.5px; }
+  .two { display: grid; grid-template-columns: 1fr; gap: 16px; }
+  @media (min-width: 900px) { .two { grid-template-columns: 1fr 1fr; } }
+  .two h3 { font-size: 13.5px; margin: 0 0 4px; font-weight: 600; color: var(--text-secondary); }
+  .warn { color: #b25d00; font-weight: 600; }
+  :root[data-theme="dark"] .warn { color: #e0a24a; }
+  @media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) .warn { color: #e0a24a; } }
 </style>
 </head>
 <body>
@@ -119,6 +129,7 @@
 
   <div class="note" role="note">
     <b>Calidad de datos.</b> Varias estaciones traían 0.0 mm durante meses enteros de la temporada de lluvias (por ejemplo, FIUADY en junio de 2020, con ~580 mm en las demás estaciones). Son faltantes codificados como cero y se dejaron <b>sin dato</b>; aparecen como huecos en las gráficas. Los sectores son aproximados por coordenadas y no hay estación en el Centro.
+    <br><b>Reportes de drenaje.</b> Vienen del Ayuntamiento (respuesta a la PNT) y se muestran solo los reportes por <i>solicitud</i>: el trabajo programado (31 % del total) no responde a la lluvia. No hay datos de 2023 y 2018–2022 y 2024–2026 son entregas distintas. Se publican sin nombres, direcciones ni coordenadas.
   </div>
 
   <section class="kpis" id="kpis" aria-label="Indicadores del periodo seleccionado"></section>
@@ -158,6 +169,30 @@
     </article>
 
     <article class="card span2">
+      <h2>Lluvia y reportes de desagüe de calles inundadas</h2>
+      <p class="desc">Arriba, la lluvia mensual; abajo, los reportes de desagüe que recibió el Ayuntamiento. Cuando llueve más, se reporta más: octubre de 2020 (Gamma y Delta) y junio de 2026 son los picos.</p>
+      <div class="legend" id="lg-rep"></div>
+      <div class="plot" id="c-rain-m"></div>
+      <div class="plot" id="c-rep-m"></div>
+      <p class="foot" id="nota-rep"></p>
+    </article>
+
+    <article class="card span2">
+      <h2>El temporal del 30 de mayo al 1 de junio de 2026, día por día</h2>
+      <p class="desc">Lluvia diaria de las estaciones y reportes de drenaje recibidos por el Ayuntamiento (solo solicitudes). No depende del filtro de años.</p>
+      <div class="two">
+        <div><h3>Lluvia diaria (mm)</h3><div class="plot" id="c-ev-lluvia"></div></div>
+        <div><h3>Reportes por día</h3><div class="legend" id="lg-ev"></div><div class="plot" id="c-ev-rep"></div></div>
+      </div>
+    </article>
+
+    <article class="card span2">
+      <h2>Fenómenos registrados por Protección Civil (PROCIVY)</h2>
+      <p class="desc" id="pv-desc"></p>
+      <div class="scroll"><table id="t-pv"><thead><tr><th>Fecha</th><th>Fenómeno</th><th>Efecto</th><th>Afectaciones en Mérida</th><th>Personas</th></tr></thead><tbody></tbody></table></div>
+    </article>
+
+    <article class="card span2">
       <h2>Eventos extraordinarios (≥100 mm en 24 h)</h2>
       <p class="desc" id="ev-desc"></p>
       <div class="scroll"><table id="t-ev"><thead><tr><th>Fecha</th><th>Estación</th><th class="n">Lluvia (mm)</th><th>Evento asociado</th></tr></thead><tbody></tbody></table></div>
@@ -165,7 +200,7 @@
   </div>
 
   <footer>
-    Fuente: SMN/CONAGUA (CLICOM), procesado en <code>scripts/procesar_datos.py</code>. Datos en
+    Fuentes: SMN/CONAGUA (CLICOM) procesado en <code>scripts/procesar_datos.py</code>; reportes de drenaje y fenómenos: respuestas a la PNT del Ayuntamiento de Mérida y de PROCIVY, procesadas en <code>scripts/procesar_pnt.py</code>. Datos en
     <a href="https://github.com/joseeangel0/merida-ciudad-esponja/tree/main/subtema_1_precipitacion/datos/07_Datos_propios">datos/07_Datos_propios</a>.
     Actualizado el <span id="gen"></span>.
   </footer>
@@ -354,6 +389,9 @@ function render() {
   // mapa
   pintaMapa();
 
+  // reportes de drenaje y PROCIVY
+  renderPNT();
+
   // tabla de eventos
   $("ev-desc").textContent = `${ev.length} día(s) con ≥100 mm entre ${state.desde} y ${state.hasta}. El evento asociado se cruza con las reseñas de ciclones del SMN.`;
   const tb = $("t-ev").querySelector("tbody"); tb.replaceChildren();
@@ -379,6 +417,65 @@ $("verTabla").addEventListener("click", ev => {
   ev.currentTarget.setAttribute("aria-pressed", on); ev.currentTarget.textContent = on ? "Ver gráfica" : "Ver tabla";
   $("t-anual").hidden = !on; $("c-anual").hidden = on;
 });
+
+
+// ------------------------------------------------------------------ reportes de drenaje (PNT) y PROCIVY
+function leyenda(host, items) {
+  host.replaceChildren();
+  items.forEach(([color, texto]) => { const s = el("span", { class: "lg" }); const k = el("i"); k.style.background = color; s.append(k, texto); host.append(s); });
+}
+const dm = ym => MESES[+ym.slice(5) - 1] + " " + ym.slice(2, 4);
+const diaCorto = f => (+f.slice(8)) + " " + MESES[+f.slice(5, 7) - 1].toLowerCase();
+
+function renderPNT() {
+  // ---- mensual: lluvia (promedio de estaciones elegidas) y reportes
+  const meses = [];
+  for (let y = Math.max(state.desde, 2018); y <= Math.min(state.hasta, 2026); y++)
+    for (let m = 1; m <= 12; m++) { const ym = y + "-" + String(m).padStart(2, "0"); if (ym <= "2026-10") meses.push(ym); }
+  const acc = {};
+  D.mensual.forEach(r => { if (state.sel.has(r[0]) && r[2] != null) (acc[r[1]] = acc[r[1]] || []).push(r[2]); });
+  const lluvia = meses.map(m => acc[m] ? acc[m].reduce((s, v) => s + v, 0) / acc[m].length : null);
+  const anexo = Object.fromEntries(D.reportes_mes.anexo), xls = Object.fromEntries(D.reportes_mes.xls_desague);
+  const hayAnexo = meses.some(m => m <= "2022-12"), hayXls = meses.some(m => m >= "2024-01");
+  const sA = { key: "anexo", name: "Reportes de desagüe (anexo 2018–2022)", color: "var(--accent)", values: meses.map(m => (m <= "2022-12" ? (anexo[m] || 0) : null)) };
+  const sX = { key: "xls", name: "Reportes de desagüe (reporte 2024–2026)", color: "var(--text-muted)", values: meses.map(m => (m >= "2024-01" ? (xls[m] || 0) : null)) };
+  const series = [sA, sX].filter(s => s.values.some(v => v != null));
+  const hostL = $("c-rain-m"), hostR = $("c-rep-m");
+  if (!meses.length || !series.length) {
+    hostL.replaceChildren(el("div", { class: "empty" }, "Elige un rango que incluya 2018–2026 para ver los reportes."));
+    hostR.replaceChildren(); leyenda($("lg-rep"), []); $("nota-rep").textContent = ""; 
+  } else {
+    leyenda($("lg-rep"), [["var(--text-secondary)", "Lluvia mensual (promedio de las estaciones elegidas)"], ...series.map(s => [s.color, s.name])]);
+    lineChart(hostL, { labels: meses.map(dm), series: [{ key: "ll", name: "Lluvia (promedio)", color: "var(--text-secondary)", values: lluvia }], yUnit: "mm", height: 190,
+      head: i => meses[i], aria: "Lluvia mensual promedio de las estaciones", labelEvery: Math.max(1, Math.ceil(meses.length / 12)) });
+    lineChart(hostR, { labels: meses.map(dm), series, yUnit: "reportes", height: 190, head: i => meses[i] + (meses[i].startsWith("2023") ? " · sin datos del Ayuntamiento" : ""),
+      aria: "Reportes mensuales de desagüe de calles inundadas", labelEvery: Math.max(1, Math.ceil(meses.length / 12)) });
+    $("nota-rep").textContent = "Fuente: Ayuntamiento de Mérida (PNT). No hay datos de 2023 y las dos series vienen de entregas distintas. Un mes sin reportes aparece en 0; un mes sin datos de lluvia, vacío.";
+  }
+
+  // ---- el temporal día por día
+  const E = D.evento, est = selEst();
+  const serL = est.map(e => ({ key: e.clave, name: e.nombre, color: e.color,
+    values: E.dias.map(d => { const r = E.lluvia.find(x => x[0] === e.clave && x[1] === d); return r ? r[2] : null; }) }));
+  lineChart($("c-ev-lluvia"), { labels: E.dias.map(diaCorto), series: serL, yUnit: "mm", height: 240, dots: true, head: i => diaCorto(E.dias[i]) + " de 2026",
+    aria: "Lluvia diaria por estación durante el temporal", labelEvery: 3 });
+  const serE = [{ key: "des", name: "Desagüe de calles inundadas", color: "var(--accent)", values: E.desague },
+                { key: "tot", name: "Todas las solicitudes de drenaje", color: "var(--text-secondary)", values: E.total }];
+  leyenda($("lg-ev"), serE.map(s => [s.color, s.name]));
+  lineChart($("c-ev-rep"), { labels: E.dias.map(diaCorto), series: serE, yUnit: "reportes", height: 240, dots: true, head: i => diaCorto(E.dias[i]) + " de 2026",
+    aria: "Reportes diarios de drenaje durante el temporal", labelEvery: 3 });
+
+  // ---- PROCIVY
+  const tb = $("t-pv").querySelector("tbody"); tb.replaceChildren();
+  const filas = D.procivy.filter(r => r[8] || (+r[1].slice(0, 4) >= state.desde && +r[1].slice(0, 4) <= state.hasta))
+    .sort((a, b) => (!!a[8] - !!b[8]) || b[1].localeCompare(a[1]));
+  $("pv-desc").textContent = `${filas.length} registro(s). PROCIVY solo entregó desde octubre de 2024 (se pidió desde 2000); no trae lámina de lluvia, remite al SMN.`;
+  filas.forEach(r => {
+    const tr = el("tr"); const f = el("td", {}, r[0]);
+    if (r[8]) { const w = el("span", { class: "warn", title: r[8] }, " ⚠ año 2027 en el original"); f.append(w); }
+    tr.append(f, el("td", {}, r[2]), el("td", {}, r[4]), el("td", {}, r[5]), el("td", {}, r[6] === "NO APLICA" ? "—" : r[6])); tb.append(tr);
+  });
+}
 
 // ------------------------------------------------------------------ mapa (Leaflet; si no hay red, se avisa)
 let map, capas = [];

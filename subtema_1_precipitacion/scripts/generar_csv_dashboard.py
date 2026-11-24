@@ -38,9 +38,43 @@ UMBRAL_EVENTO_INTENSO = 50.0  # mm en 24 h
 MIN_DIAS_CON_DATO = 25      # mes con menos días con dato => lluvia_mm vacío
 
 
-def leer(nombre):
-    with open(DATOS / nombre, encoding="utf-8") as f:
+P5 = DATOS.parent / "05_Solicitudes_gobierno"
+
+
+def leer(nombre, carpeta=None):
+    with open((carpeta or DATOS) / nombre, encoding="utf-8") as f:
         return list(csv.DictReader(f))
+
+
+def datos_pnt():
+    """Series de reportes de drenaje (C5.2) y eventos de PROCIVY (C5.3) para el dashboard."""
+    mes_anexo, mes_xls, mes_total = defaultdict(int), defaultdict(int), defaultdict(int)
+    dia_des, dia_tot = defaultdict(int), defaultdict(int)
+    for r in leer("ayuntamiento_desague_calles_historico_dia.csv", P5):
+        mes_anexo[r["fecha_solicitud"][:7]] += int(r["reportes"])
+    for r in leer("ayuntamiento_reportes_drenaje_dia.csv", P5):
+        if r["origen"] != "solicitud":     # el trabajo programado no responde a la lluvia
+            continue
+        n, f = int(r["reportes"]), r["fecha_solicitud"]
+        mes_total[f[:7]] += n
+        dia_tot[f] += n
+        if r["servicio"].startswith("DESAGÜE DE CALLES INUNDADAS"):
+            mes_xls[f[:7]] += n
+            dia_des[f] += n
+    ini, fin = "2026-05-18", "2026-06-08"
+    dias = sorted({f for f in dia_tot if ini <= f <= fin})
+    lluvia = [[r["estacion"], r["fecha"], num(r["precip_mm"])] for r in leer("smn_precip_diaria.csv")
+              if r["estacion"] in SECTOR and ini <= r["fecha"] <= fin]
+    procivy = [[r["fecha_texto_original"], r["fecha_inicio"], r["fenomeno"], r["alerta_siat"], r["efectos"],
+                r["afectaciones_merida"], r["personas_afectadas"], r["declaratorias"], r["nota"]]
+               for r in leer("procivy_eventos_2024_2026.csv", P5)]
+    return {
+        "reportes_mes": {"anexo": sorted(mes_anexo.items()), "xls_desague": sorted(mes_xls.items()),
+                         "xls_total": sorted(mes_total.items())},
+        "evento": {"dias": dias, "desague": [dia_des.get(d, 0) for d in dias], "total": [dia_tot.get(d, 0) for d in dias],
+                   "lluvia": lluvia},
+        "procivy": procivy,
+    }
 
 
 def num(x):
@@ -79,6 +113,7 @@ def escribir_data_js(nombres, filas_mensuales):
         "eventos": eventos,
         # [clave, T_años, lluvia_24h_mm, max_observado_mm, años_usados]
         "retorno": retorno,
+        **datos_pnt(),
     }
     out = DATOS.parent.parent / "dashboard" / "data.js"
     out.parent.mkdir(exist_ok=True)
