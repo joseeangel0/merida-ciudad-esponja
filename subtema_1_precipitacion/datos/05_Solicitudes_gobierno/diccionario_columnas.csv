@@ -1,0 +1,43 @@
+tabla,columna,tipo,unidad,descripcion
+procivy_eventos_2024_2026.csv,fecha_texto_original,texto,,Fecha tal como la entregó PROCIVY
+procivy_eventos_2024_2026.csv,fecha_inicio,fecha,AAAA-MM-DD,Primer día del evento (interpretado)
+procivy_eventos_2024_2026.csv,fecha_fin,fecha,AAAA-MM-DD,Último día del evento (interpretado)
+procivy_eventos_2024_2026.csv,fenomeno,texto,,Fenómeno meteorológico
+procivy_eventos_2024_2026.csv,alerta_siat,texto,,Alerta del Sistema de Alerta Temprana para Ciclones Tropicales
+procivy_eventos_2024_2026.csv,efectos,texto,,"Efecto del fenómeno (lluvia moderada, fuerte, intensa…)"
+procivy_eventos_2024_2026.csv,afectaciones_merida,texto,,Afectaciones en Mérida
+procivy_eventos_2024_2026.csv,viviendas_afectadas,texto,,Viviendas afectadas (texto original)
+procivy_eventos_2024_2026.csv,personas_afectadas,texto,,Personas o familias afectadas (texto original)
+procivy_eventos_2024_2026.csv,refugios_activados,texto,,Refugios activados (texto original)
+procivy_eventos_2024_2026.csv,lamina_lluvia,texto,,"Lámina de lluvia: remite al SMN, sin cifra"
+procivy_eventos_2024_2026.csv,declaratorias,texto,,Declaratorias de emergencia o desastre
+procivy_eventos_2024_2026.csv,nota,texto,,"Advertencia sobre el registro, si la hay"
+ayuntamiento_reportes_drenaje_dia.csv,fecha_solicitud,fecha,AAAA-MM-DD,Día en que se recibió el reporte
+ayuntamiento_reportes_drenaje_dia.csv,departamento,texto,,Drenaje Poniente u Oriente
+ayuntamiento_reportes_drenaje_dia.csv,servicio,texto,,Tipo de servicio solicitado
+ayuntamiento_reportes_drenaje_dia.csv,procedencia,texto,,"Canal por el que llegó (Ayuntatel, app, internet, trabajos programados…)"
+ayuntamiento_reportes_drenaje_dia.csv,origen,texto,,trabajo_programado (programas del propio Ayuntamiento) o solicitud (todo lo demás)
+ayuntamiento_reportes_drenaje_dia.csv,reportes,entero,reportes,Reportes recibidos ese día
+ayuntamiento_reportes_drenaje_dia.csv,atendidos,entero,reportes,"De ellos, con estado Atendida"
+ayuntamiento_reportes_drenaje_dia.csv,dias_atencion_mediana,decimal,días,Mediana de días entre solicitud y atención (vacío si no hay fecha de atención)
+ayuntamiento_reportes_drenaje_ageb_mes.csv,mes,texto,AAAA-MM,Mes de la solicitud
+ayuntamiento_reportes_drenaje_ageb_mes.csv,cvegeo_ageb,texto,,Clave de la AGEB urbana (13 caracteres); SIN_COORDENADAS_VALIDAS o SIN_AGEB_URBANA si no se pudo ubicar
+ayuntamiento_reportes_drenaje_ageb_mes.csv,servicio,texto,,Tipo de servicio
+ayuntamiento_reportes_drenaje_ageb_mes.csv,origen,texto,,trabajo_programado o solicitud
+ayuntamiento_reportes_drenaje_ageb_mes.csv,reportes,entero,reportes,Reportes del mes en esa AGEB
+ayuntamiento_desague_calles_historico_dia.csv,fecha_solicitud,fecha,AAAA-MM-DD,Día de la solicitud
+ayuntamiento_desague_calles_historico_dia.csv,zona,texto,,Poniente u Oriente
+ayuntamiento_desague_calles_historico_dia.csv,reportes,entero,reportes,Reportes ese día
+ayuntamiento_desague_calles_historico_dia.csv,dias_atencion_mediana,decimal,días,Mediana de días hasta la atención
+ayuntamiento_desague_calles_litros_colonia_dia.csv,fecha,fecha,AAAA-MM-DD,Día de atención (o de solicitud si no hay)
+ayuntamiento_desague_calles_litros_colonia_dia.csv,colonia,texto,,Colonia o fraccionamiento (normalizado)
+ayuntamiento_desague_calles_litros_colonia_dia.csv,servicios,entero,servicios,Desagües realizados
+ayuntamiento_desague_calles_litros_colonia_dia.csv,litros,entero,litros,Agua desalojada
+respuestas_pnt_procedencia.csv,archivo,texto,,Archivo
+respuestas_pnt_procedencia.csv,en_git,texto,,"Si está en el repositorio y, si no, por qué"
+respuestas_pnt_procedencia.csv,sha256_original,texto,,SHA-256 del archivo recibido
+respuestas_pnt_procedencia.csv,sha256_publicado,texto,,SHA-256 de la copia publicada (sin metadatos)
+respuestas_pnt_procedencia.csv,bytes_publicado,entero,bytes,Tamaño de la copia publicada
+controles_calidad_pnt.csv,control,texto,,Qué se verificó
+controles_calidad_pnt.csv,valor,texto,,Resultado
+controles_calidad_pnt.csv,detalle,texto,,Detalle

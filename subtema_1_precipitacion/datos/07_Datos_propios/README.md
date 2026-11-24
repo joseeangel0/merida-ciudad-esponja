@@ -2,25 +2,25 @@
 
 Generado el 2026-11-24 por `scripts/generar_documentacion.py`. Responsable: Equipo 1 (Diego Loria, Rama Marin, José Ángel Pech).
 
-Insumo: registros diarios del SMN/CONAGUA (CLICOM) en `insumo_SMN_CONAGUA_estaciones/`. Procesamiento: `scripts/procesar_datos.py` (limpieza, agregación, Gumbel) y `scripts/generar_csv_dashboard.py`. Codificación UTF-8, separador coma, fechas ISO. **Celda vacía = sin dato (nunca 0 mm).** La limpieza y los registros descartados están en [`../REPORTE_CALIDAD.md`](../REPORTE_CALIDAD.md).
+Insumo: registros diarios del SMN/CONAGUA (CLICOM) en `insumo_SMN_CONAGUA_estaciones/`. Procesamiento: `scripts/procesar_datos.py` (limpieza, agregación, Gumbel) y `scripts/generar_csv_dashboard.py`. UTF-8, coma como separador, fechas ISO. **Celda vacía = sin dato (nunca 0 mm).** La limpieza y los registros descartados están en [`../REPORTE_CALIDAD.md`](../REPORTE_CALIDAD.md).
 
 ## Resumen de tablas
 
-| Archivo | Fuente | Granularidad | Clave | Cobertura | Filas | Estaciones |
-|---|---|---|---|---|---:|---:|
-| [`smn_catalogo_estaciones.csv`](smn_catalogo_estaciones.csv) | C7.1 | estación | `clave` | 1951–2026 | 9 | 9 |
-| [`smn_precip_diaria.csv`](smn_precip_diaria.csv) | C7.1 | estación-día | `estacion + fecha` | 1951-01 – 2026-09 | 115,430 | 9 |
-| [`smn_precip_mensual.csv`](smn_precip_mensual.csv) | C7.1 | estación-mes | `estacion + fecha` | 1951-01 – 2026-09 | 4,444 | 9 |
-| [`smn_precip_anual.csv`](smn_precip_anual.csv) | C7.1 | estación-año | `estacion + anio` | 1951 – 2026 | 374 | 9 |
-| [`indices_lluvia_extrema_por_anio.csv`](indices_lluvia_extrema_por_anio.csv) | C7.2 | estación-año | `estacion + anio` | 1951 – 2026 | 239 | 5 |
-| [`periodos_retorno_lluvia_24h.csv`](periodos_retorno_lluvia_24h.csv) | C7.2 | estación × periodo de retorno | `estacion + periodo_retorno_anios` | — | 12 | 2 |
-| [`tendencias_31097.csv`](tendencias_31097.csv) | C7.2 | estación | `estacion` | — | 1 | 1 |
-| [`climatologia_mensual_31044_1991_2020.csv`](climatologia_mensual_31044_1991_2020.csv) | C7.1 | mes del año | `mes` | — | 12 | — |
-| [`promedio_anual_por_estacion_1991_2020.csv`](promedio_anual_por_estacion_1991_2020.csv) | C7.1 | estación | `clave` | — | 8 | 8 |
-| [`eventos_extraordinarios_>=100mm.csv`](eventos_extraordinarios_>=100mm.csv) | C7.3 | evento (estación-día) | `estacion + fecha` | 1954-08 – 2026-06 | 76 | 5 |
-| [`dashboard_lluvia_mensual_por_estacion.csv`](dashboard_lluvia_mensual_por_estacion.csv) | C7.1 | estación-mes | `estacion_clave + fecha` | 1951-01 – 2026-09 | 2,329 | 5 |
-| [`meses_invalidados.csv`](meses_invalidados.csv) | C7.1 | estación-mes | `estacion + mes` | — | 130 | 6 |
-| [`estaciones_claves_territoriales.csv`](estaciones_claves_territoriales.csv) | C7.1 | estación | `clave` | — | 9 | 9 |
+| Archivo | Fuente | Granularidad | Clave | Cobertura | Filas |
+|---|---|---|---|---|---:|
+| [`smn_catalogo_estaciones.csv`](smn_catalogo_estaciones.csv) | C7.1 | estación | `clave` | 1951–2026 | 9 |
+| [`smn_precip_diaria.csv`](smn_precip_diaria.csv) | C7.1 | estación-día | `estacion + fecha` | 1951-01 – 2026-09 | 115,430 |
+| [`smn_precip_mensual.csv`](smn_precip_mensual.csv) | C7.1 | estación-mes | `estacion + fecha` | 1951-01 – 2026-09 | 4,444 |
+| [`smn_precip_anual.csv`](smn_precip_anual.csv) | C7.1 | estación-año | `estacion + anio` | 1951 – 2026 | 374 |
+| [`indices_lluvia_extrema_por_anio.csv`](indices_lluvia_extrema_por_anio.csv) | C7.2 | estación-año | `estacion + anio` | 1951 – 2026 | 239 |
+| [`periodos_retorno_lluvia_24h.csv`](periodos_retorno_lluvia_24h.csv) | C7.2 | estación × periodo de retorno | `estacion + periodo_retorno_anios` | — | 12 |
+| [`tendencias_31097.csv`](tendencias_31097.csv) | C7.2 | estación | `estacion` | — | 1 |
+| [`climatologia_mensual_31044_1991_2020.csv`](climatologia_mensual_31044_1991_2020.csv) | C7.1 | mes del año | `mes` | — | 12 |
+| [`promedio_anual_por_estacion_1991_2020.csv`](promedio_anual_por_estacion_1991_2020.csv) | C7.1 | estación | `clave` | — | 8 |
+| [`eventos_extraordinarios_>=100mm.csv`](eventos_extraordinarios_>=100mm.csv) | C7.3 | evento (estación-día) | `estacion + fecha` | 1954-08 – 2026-06 | 76 |
+| [`dashboard_lluvia_mensual_por_estacion.csv`](dashboard_lluvia_mensual_por_estacion.csv) | C7.1 | estación-mes | `estacion_clave + fecha` | 1951-01 – 2026-09 | 2,329 |
+| [`meses_invalidados.csv`](meses_invalidados.csv) | C7.1 | estación-mes | `estacion + mes` | — | 130 |
+| [`estaciones_claves_territoriales.csv`](estaciones_claves_territoriales.csv) | C7.1 | estación | `clave` | — | 9 |
 
 ## Cómo se relacionan
 - La clave de cruce entre casi todas las tablas es la **clave de estación SMN** (`estacion`, `clave` o `estacion_clave`).

@@ -72,5 +72,34 @@ Además, la lluvia de 24 h con periodo de retorno de 100 años pasó de 209 a 21
 - El cruce estación–AGEB (`estaciones_claves_territoriales.csv`) depende del datum de las coordenadas del SMN; una estación cerca del borde de una AGEB podría caer en la vecina.
 - Los datos del SMN son preliminares y no se contrastaron contra otra red de medición.
 
+## Respuestas de la PNT (C5): controles y límites
+Procesadas con `scripts/procesar_pnt.py`; los controles salen de [`05_Solicitudes_gobierno/controles_calidad_pnt.csv`](05_Solicitudes_gobierno/controles_calidad_pnt.csv).
+
+| Control | Resultado | Detalle |
+|---|---|---|
+| PROCIVY: eventos registrados | 18 | 2024-09-26 a 2026-10-08 (sin contar la fecha con error) |
+| PROCIVY: fechas posteriores a la respuesta (no corregidas) | 1 | 10 JUL. 2027 |
+| Drenaje: reportes en el XLS | 65448 | 2024-01-01 a 2026-10-05; sin fecha: 0 |
+| Drenaje: reportes por trabajo programado | 31.4 % | sin coordenadas; no responden a la lluvia |
+| Drenaje: solicitudes con coordenadas | 90.2 % | el campo trae solo una coma cuando no hay coordenadas |
+| Drenaje: AGEB distintas con reportes | 514 | Marco Geoestadístico 2025 |
+| Drenaje: solicitudes sin AGEB urbana o sin coordenadas | 10.4 % | quedan como SIN_* |
+| Anexo PDF: líneas con folio / reportes únicos | 1,600 / 1,583 | 17 folios repetidos descartados; 2018-01-27 a 2022-12-24 |
+| Anexo PDF: años cubiertos | 2018, 2019, 2020, 2021, 2022 | no hay registros de 2023 |
+| Desagüe con litros, hoja 2024: filas y litros vs hoja TOTALES | coincide | 150 reportes y 4,570,000 L (oficial: 150 y 4,570,000 L) |
+| Desagüe con litros, hoja 2025: filas y litros vs hoja TOTALES | coincide | 187 reportes y 4,678,000 L (oficial: 187 y 4,678,000 L) |
+| Desagüe con litros, hoja 2026: filas y litros vs hoja TOTALES | coincide | 243 reportes y 7,474,000 L (oficial: 243 y 7,474,000 L) |
+| Desagüe: hoja 30MAY-1JUNIO es un extracto de 2026 | sí | 41 reportes y 1,510,000 L; no se suma dos veces |
+| Desagüe: filas con año distinto al de su hoja | 1 | se conservan con su fecha real |
+
+Límites que conviene tener presentes:
+- Los reportes de drenaje son **registros administrativos** del Ayuntamiento: miden la demanda atendida, no la superficie inundada, y dependen de que la gente llame.
+- El 31 % de los reportes de 2024–2026 es trabajo programado del propio Ayuntamiento; no se relaciona con la lluvia y no tiene coordenadas. Para analizar lluvia contra afectaciones hay que filtrar `origen = solicitud`.
+- No hay datos de 2023, y los de 2018–2022 (anexo PDF) y 2024–2026 (XLS) vienen de entregas distintas; no se pueden comparar sin cuidado.
+- El Ayuntamiento declaró que **no existen** registros de pluviómetros municipales ni un listado de puntos de encharcamiento recurrente.
+- PROCIVY solo entregó desde octubre de 2024 y sus fechas venían en texto libre; un registro con año 2027 se conservó sin corregir y se marcó.
+- C5.1 (CONAGUA): la información existe pero aún no se recoge (CD con pago de derechos); no hay datos de esa respuesta en el repositorio.
+- Los originales con datos personales no están en el repositorio; su huella SHA-256 está en `05_Solicitudes_gobierno/respuestas_pnt_procedencia.csv`.
+
 ## Procedencia
 Cada fuente y archivo está en [`MANIFIESTO_FUENTES.csv`](MANIFIESTO_FUENTES.csv) y [`MANIFIESTO_ARCHIVOS.csv`](MANIFIESTO_ARCHIVOS.csv) (URL, versión, fecha de extracción, licencia, responsable, tamaño y SHA-256).

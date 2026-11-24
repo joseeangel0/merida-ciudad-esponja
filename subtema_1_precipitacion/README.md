@@ -28,6 +28,7 @@ Pregunta: **¿Cómo se distribuye la lluvia en Mérida y cómo ha cambiado con e
 ```bash
 python3 -m venv .venv && .venv/bin/pip install -r scripts/requirements.txt
 .venv/bin/python scripts/procesar_datos.py                       # SMN -> datos/07_Datos_propios/ (ceros espurios -> sin dato)
+.venv/bin/python scripts/procesar_pnt.py <carpeta con los ZIP de la PNT>  # respuestas PNT -> datos/05_Solicitudes_gobierno/ (anonimiza)
 .venv/bin/python scripts/generar_csv_dashboard.py                # CSV mensual + dashboard/data.js
 .venv/bin/python scripts/generar_documentacion.py                # diccionario, manifiestos, claves AGEB y reporte de calidad
 .venv/bin/python scripts/descargar_nasa_lidar.py               # NASA GEDI/ICESat-2 -> datos/08_LiDAR/NASA_GEDI_ICESat2/ (cuenta Earthdata)
@@ -37,6 +38,7 @@ cd ../documento && tectonic fuentes_precipitacion_merida.tex     # .tex -> PDF
 Para agregar o editar una fuente, modifica `scripts/fuentes.py`; de ahí salen el Excel y el PDF.
 
 ## Pendientes
-1. **C5 (solicitudes PNT, enviadas el 01-oct-2026):** el plazo con prórroga venció el 17-nov-2026. Falta **verificar la respuesta en la PNT** ("Mi Historial"). Si no hubo respuesta, se puede presentar un recurso de revisión. Folios en `datos/05_Solicitudes_gobierno/`.
+1. **C5.1 (CONAGUA):** respondió el 30-oct-2026 que tiene la lluvia diaria y horaria del Observatorio de Mérida y de las estaciones «Mérida» y «Mérida CONAGUA», pero solo la entrega en CD ($13 MXN de derechos de reproducción, con cita en Ciudad de México) o por SEPOMEX. Hay que recogerla y procesarla.
 2. Programar el scraping del SMN para que corra cada semana (las estaciones automáticas solo guardan 90 días). Hoy C6 solo tiene muestras.
 3. Tablero de Power BI de C3.3 y capas del Geoportal de Mérida (C4.1): solo se pueden consultar en línea.
+4. Los reportes de drenaje del Ayuntamiento no incluyen 2023.

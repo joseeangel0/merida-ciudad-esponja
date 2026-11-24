@@ -28,7 +28,7 @@ Detalle del subtema, cómo regenerarlo todo y pendientes: [`subtema_1_precipitac
 | C2 datos.gob.mx (3) | Completas |
 | C3 SIEGY (3) | C3.1 y C3.2 completas; **C3.3 parcial** (solo el boletín en PDF; el tablero Power BI no se puede descargar) |
 | C4 GeoPortal / Ayuntamiento (3) | C4.2 y C4.3 descargadas (PDF pesados fuera de Git); **C4.1 solo consulta en línea** (visor WMS) |
-| C5 Solicitudes PNT (3) | Enviadas el 01/10/2026 (plazo con prórroga: 17/11). **Pendiente de verificar la respuesta en la PNT** ("Mi Historial"); aquí no hay datos todavía |
+| C5 Solicitudes PNT (3) | **Las tres respondieron (26 a 30-oct-2026).** C5.2 (Ayuntamiento) y C5.3 (PROCIVY) procesadas y anonimizadas; **C5.1 (CONAGUA)** tiene lluvia horaria pero solo la entrega en CD ($13 MXN), pendiente de recoger |
 | C6 Scraping (3) | **Solo muestras** de octubre-2026 + scripts de ejemplo |
 | C7 Datos propios (3) | Completas (series, índices extremos, periodos de retorno, eventos ≥100 mm) |
 | C8 LiDAR (3) | C8.1 y C8.2 descargadas; C8.3 (NASA GEDI/ICESat-2) descargada y recortada a Mérida (única fuente LiDAR real del catálogo) |
@@ -44,6 +44,7 @@ Detalle del subtema, cómo regenerarlo todo y pendientes: [`subtema_1_precipitac
 | Procedencia de las 27 fuentes (URL, versión, fecha de extracción, licencia, responsable) | [`datos/MANIFIESTO_FUENTES.csv`](subtema_1_precipitacion/datos/MANIFIESTO_FUENTES.csv) |
 | Cada archivo con tamaño, SHA-256 y si está en Git | [`datos/MANIFIESTO_ARCHIVOS.csv`](subtema_1_precipitacion/datos/MANIFIESTO_ARCHIVOS.csv) |
 | Reporte de calidad y registros descartados | [`datos/REPORTE_CALIDAD.md`](subtema_1_precipitacion/datos/REPORTE_CALIDAD.md), [`meses_invalidados.csv`](subtema_1_precipitacion/datos/07_Datos_propios/meses_invalidados.csv) |
+| Respuestas de la PNT: tablas limpias y anonimizadas, cartas oficiales y controles de calidad | [`datos/05_Solicitudes_gobierno/README.md`](subtema_1_precipitacion/datos/05_Solicitudes_gobierno/README.md) |
 | Clave territorial (municipio y AGEB del INEGI) de cada estación | [`estaciones_claves_territoriales.csv`](subtema_1_precipitacion/datos/07_Datos_propios/estaciones_claves_territoriales.csv) |
 
 ## Calidad de datos: ceros que eran faltantes
@@ -61,5 +62,7 @@ No se versionan los ZIP de INEGI, los rásteres y modelos de elevación de `08_L
 Ver [`AGENTS.md`](AGENTS.md): matriz 9×3 estricta, `scripts/fuentes.py` como única fuente de verdad del catálogo (el Excel, el LaTeX y el PDF se **generan**, no se editan a mano) y commits en español con formato Conventional Commits.
 
 ## Licencia y fuentes
+
+**Privacidad:** los Excel y PDF de reportes del Ayuntamiento traen nombre, teléfono y dirección de ciudadanos y **no se publican**; solo se incluyen conteos por día, mes, AGEB y colonia.
 
 Los datos pertenecen a sus instituciones (INEGI, SMN/CONAGUA, CENAPRED, Gobierno de Yucatán, Ayuntamiento de Mérida, Overture Maps, OpenStreetMap, NASA); cada uno conserva sus términos de uso, indicados en el catálogo. Edificios de Overture y OSM: licencia ODbL.

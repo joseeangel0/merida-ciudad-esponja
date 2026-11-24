@@ -15,40 +15,36 @@ Los datos de partida deben existir (ZIP de INEGI, insumo SMN en 07_Datos_propios
 import hashlib
 import subprocess
 import sys
-import tempfile
-import zipfile
 from datetime import date
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-import warnings
 
-import shapefile  # pyshp
-from pyproj import CRS, Transformer
-
-warnings.filterwarnings("ignore", category=UserWarning, module="shapefile")
 AQUI = Path(__file__).resolve().parent
 sys.path.insert(0, str(AQUI))
 from fuentes import CATEGORIAS, FUENTES  # noqa: E402
+from geo_agebs import IndiceAgeb  # noqa: E402
 
 DATOS = AQUI.parent / "datos"
 P7 = DATOS / "07_Datos_propios"
+P5 = DATOS / "05_Solicitudes_gobierno"
 HOY = date.today().isoformat()
 
 RESPONSABLE = "Equipo 1 (Diego Loria, Rama Marin, José Ángel Pech)"  # todos los integrantes, por decisión del equipo
 
 # Fecha en que se bajó cada fuente (no se usa la fecha del archivo: un clon de Git la cambia).
 EXTRACCION = {f["id"]: "2026-10-01" for f in FUENTES}
-EXTRACCION.update({"C5.1": "—", "C5.2": "—", "C5.3": "—", "C8.3": "2026-10-05",
+EXTRACCION.update({"C5.1": "2026-10-30", "C5.2": "2026-10-29", "C5.3": "2026-10-30", "C8.3": "2026-10-05",
                    "C7.1": HOY, "C7.2": HOY, "C7.3": HOY})
 VERSION = {
     "C1.1": "Edición 2004–2006", "C1.2": "Edición 2023", "C1.3": "Marco Geoestadístico 2025",
     "C2.1": "Serie 1985–2023 (historico.datos.gob.mx)", "C2.2": "CENAPRED 2000–2023; CNPC 2018–2025",
     "C2.3": "Actualizado jun-2025", "C3.1": "Programas presupuestarios 2024–2025",
     "C3.2": "Boletín 2026-3", "C3.3": "Boletín 2025-10", "C4.1": "Capas del Atlas 2017 (WMS)",
-    "C4.2": "Publicado 2018 (datos ≤2017)", "C4.3": "Publicado jun-2024", "C5.1": "—", "C5.2": "—",
-    "C5.3": "—", "C6.1": "Muestra del 2026-10-01 (SIVEA guarda solo 90 días)", "C6.2": "Temporada 2020",
+    "C4.2": "Publicado 2018 (datos ≤2017)", "C4.3": "Publicado jun-2024", "C5.1": "Respuesta al folio 340009400252326 (30-oct-2026)",
+    "C5.2": "Respuesta al folio 1190579126000596 (oficios del 26 al 29-oct-2026)",
+    "C5.3": "Respuesta al folio 1191217326000207 (28 a 30-oct-2026)", "C6.1": "Muestra del 2026-10-01 (SIVEA guarda solo 90 días)", "C6.2": "Temporada 2020",
     "C6.3": "Sitemaps dic-2017 a oct-2026 (muestra de 170 notas)",
     "C7.1": f"Generado {HOY} con procesar_datos.py (datos SMN hasta 2026-09-25)",
     "C7.2": f"Generado {HOY}", "C7.3": f"Generado {HOY}",
@@ -60,53 +56,14 @@ VERSION = {
 # --------------------------------------------------------------------------- 1. claves territoriales
 def claves_territoriales():
     cat = pd.read_csv(P7 / "smn_catalogo_estaciones.csv", dtype={"clave": str})
-    with tempfile.TemporaryDirectory() as tmp:
-        with zipfile.ZipFile(DATOS / "01_INEGI" / "mg2025_31_yucatan.zip") as z:
-            for n in z.namelist():
-                if Path(n).stem in ("31a", "31mun"):
-                    z.extract(n, tmp)
-        base = Path(tmp) / "conjunto_de_datos"
-        crs = CRS.from_wkt((base / "31a.prj").read_text())
-        tr = Transformer.from_crs("EPSG:4326", crs, always_xy=True)
-        a = shapefile.Reader(str(base / "31a"), encoding="latin-1")
-        m = shapefile.Reader(str(base / "31mun"), encoding="latin-1")
-        campos_m = [f[0] for f in m.fields[1:]]
-        nom_mun = {r[campos_m.index("CVE_MUN")]: r[campos_m.index("NOMGEO")] for r in m.records()}
-
-        def dentro(shp, x, y):
-            if not (shp.bbox[0] <= x <= shp.bbox[2] and shp.bbox[1] <= y <= shp.bbox[3]):
-                return False
-            pts, parts = shp.points, list(shp.parts) + [len(shp.points)]
-            cruces = 0
-            for i in range(len(parts) - 1):  # regla par-impar sobre todos los anillos (maneja huecos)
-                ring = pts[parts[i]:parts[i + 1]]
-                for (x1, y1), (x2, y2) in zip(ring, ring[1:]):
-                    if (y1 > y) != (y2 > y) and x < (x2 - x1) * (y - y1) / (y2 - y1) + x1:
-                        cruces += 1
-            return cruces % 2 == 1
-
-        filas = []
-        for r in cat.itertuples():
-            x, y = tr.transform(r.longitud, r.latitud)
-            fila = dict(clave=r.clave, nombre=r.nombre, latitud=r.latitud, longitud=r.longitud,
-                        cve_ent="31", cve_mun="", nom_mun="", cve_loc="", cve_ageb="", cvegeo_ageb="",
-                        ubicacion="fuera del Marco Geoestadístico de Yucatán")
-            for sh, rec in zip(a.iterShapes(), a.iterRecords()):
-                if dentro(sh, x, y):
-                    d = dict(zip([f[0] for f in a.fields[1:]], rec))
-                    fila.update(cve_mun=d["CVE_MUN"], nom_mun=nom_mun.get(d["CVE_MUN"], ""),
-                                cve_loc=d["CVE_LOC"], cve_ageb=d["CVE_AGEB"], cvegeo_ageb=d["CVEGEO"],
-                                ubicacion="AGEB urbana")
-                    break
-            else:
-                for sh, rec in zip(m.iterShapes(), m.iterRecords()):
-                    if dentro(sh, x, y):
-                        d = dict(zip(campos_m, rec))
-                        fila.update(cve_mun=d["CVE_MUN"], nom_mun=d["NOMGEO"],
-                                    ubicacion="solo municipio (fuera de AGEB urbana)")
-                        break
-            filas.append(fila)
-    df = pd.DataFrame(filas)
+    idx = IndiceAgeb()
+    filas = []
+    for r in cat.itertuples():
+        filas.append(dict(clave=r.clave, nombre=r.nombre, latitud=r.latitud, longitud=r.longitud,
+                          cve_ent="31", **idx.ubicar(r.latitud, r.longitud)))
+    cols = ["clave", "nombre", "latitud", "longitud", "cve_ent", "cve_mun", "nom_mun", "cve_loc",
+            "cve_ageb", "cvegeo_ageb", "ubicacion"]
+    df = pd.DataFrame(filas)[cols]
     df.to_csv(P7 / "estaciones_claves_territoriales.csv", index=False)
     return df
 
@@ -196,9 +153,49 @@ TABLAS = [
                ("ubicacion", "texto", "", "Cómo se resolvió el cruce espacial")]),
 ]
 
+D = "día × departamento × servicio × procedencia"
+TABLAS5 = [
+    dict(archivo="procivy_eventos_2024_2026.csv", fuente="C5.3", gran="evento", clave="fecha_inicio + fenomeno", fecha="fecha_inicio",
+         desc="Fenómenos meteorológicos que afectaron Mérida según PROCIVY. Las fechas venían como texto libre; se conserva el original. Un registro trae año 2027 (probable error de captura; no se corrigió).",
+         cols=[("fecha_texto_original", "texto", "", "Fecha tal como la entregó PROCIVY"), ("fecha_inicio", "fecha", "AAAA-MM-DD", "Primer día del evento (interpretado)"),
+               ("fecha_fin", "fecha", "AAAA-MM-DD", "Último día del evento (interpretado)"), ("fenomeno", "texto", "", "Fenómeno meteorológico"),
+               ("alerta_siat", "texto", "", "Alerta del Sistema de Alerta Temprana para Ciclones Tropicales"), ("efectos", "texto", "", "Efecto del fenómeno (lluvia moderada, fuerte, intensa…)"),
+               ("afectaciones_merida", "texto", "", "Afectaciones en Mérida"), ("viviendas_afectadas", "texto", "", "Viviendas afectadas (texto original)"),
+               ("personas_afectadas", "texto", "", "Personas o familias afectadas (texto original)"), ("refugios_activados", "texto", "", "Refugios activados (texto original)"),
+               ("lamina_lluvia", "texto", "", "Lámina de lluvia: remite al SMN, sin cifra"), ("declaratorias", "texto", "", "Declaratorias de emergencia o desastre"),
+               ("nota", "texto", "", "Advertencia sobre el registro, si la hay")]),
+    dict(archivo="ayuntamiento_reportes_drenaje_dia.csv", fuente="C5.2", gran=D, clave="fecha_solicitud + departamento + servicio + procedencia", fecha="fecha_solicitud",
+         desc="Reportes de drenaje del Ayuntamiento (Dirección de Servicios Públicos), agregados por día. Sin nombres, direcciones ni coordenadas.",
+         cols=[("fecha_solicitud", "fecha", "AAAA-MM-DD", "Día en que se recibió el reporte"), ("departamento", "texto", "", "Drenaje Poniente u Oriente"),
+               ("servicio", "texto", "", "Tipo de servicio solicitado"), ("procedencia", "texto", "", "Canal por el que llegó (Ayuntatel, app, internet, trabajos programados…)"),
+               ("origen", "texto", "", "trabajo_programado (programas del propio Ayuntamiento) o solicitud (todo lo demás)"),
+               ("reportes", "entero", "reportes", "Reportes recibidos ese día"), ("atendidos", "entero", "reportes", "De ellos, con estado Atendida"),
+               ("dias_atencion_mediana", "decimal", "días", "Mediana de días entre solicitud y atención (vacío si no hay fecha de atención)")]),
+    dict(archivo="ayuntamiento_reportes_drenaje_ageb_mes.csv", fuente="C5.2", gran="mes × AGEB × servicio × origen", clave="mes + cvegeo_ageb + servicio + origen", fecha="mes",
+         desc="Reportes de drenaje por AGEB urbana (INEGI MG 2025) y mes. La AGEB se obtuvo de las coordenadas del reporte, que no se publican.",
+         cols=[("mes", "texto", "AAAA-MM", "Mes de la solicitud"),
+               ("cvegeo_ageb", "texto", "", "Clave de la AGEB urbana (13 caracteres); SIN_COORDENADAS_VALIDAS o SIN_AGEB_URBANA si no se pudo ubicar"),
+               ("servicio", "texto", "", "Tipo de servicio"), ("origen", "texto", "", "trabajo_programado o solicitud"), ("reportes", "entero", "reportes", "Reportes del mes en esa AGEB")]),
+    dict(archivo="ayuntamiento_desague_calles_historico_dia.csv", fuente="C5.2", gran="día × zona", clave="fecha_solicitud + zona", fecha="fecha_solicitud",
+         desc="Reportes de desagüe de calles inundadas de 2018 a 2022 (anexo PDF del Ayuntamiento), agregados por día. No hay datos de 2023.",
+         cols=[("fecha_solicitud", "fecha", "AAAA-MM-DD", "Día de la solicitud"), ("zona", "texto", "", "Poniente u Oriente"), ("reportes", "entero", "reportes", "Reportes ese día"),
+               ("dias_atencion_mediana", "decimal", "días", "Mediana de días hasta la atención")]),
+    dict(archivo="ayuntamiento_desague_calles_litros_colonia_dia.csv", fuente="C5.2", gran="día × colonia", clave="fecha + colonia", fecha="fecha",
+         desc="Desagües de calles inundadas de 2024 a 2026 con los litros desalojados (Departamento de Drenaje), por día de atención y colonia.",
+         cols=[("fecha", "fecha", "AAAA-MM-DD", "Día de atención (o de solicitud si no hay)"), ("colonia", "texto", "", "Colonia o fraccionamiento (normalizado)"),
+               ("servicios", "entero", "servicios", "Desagües realizados"), ("litros", "entero", "litros", "Agua desalojada")]),
+    dict(archivo="respuestas_pnt_procedencia.csv", fuente="C5", gran="archivo", clave="archivo", fecha=None,
+         desc="Cartas de respuesta publicadas y huella (SHA-256) de los originales que no se publican por traer datos personales.",
+         cols=[("archivo", "texto", "", "Archivo"), ("en_git", "texto", "", "Si está en el repositorio y, si no, por qué"), ("sha256_original", "texto", "", "SHA-256 del archivo recibido"),
+               ("sha256_publicado", "texto", "", "SHA-256 de la copia publicada (sin metadatos)"), ("bytes_publicado", "entero", "bytes", "Tamaño de la copia publicada")]),
+    dict(archivo="controles_calidad_pnt.csv", fuente="C5", gran="control", clave="control", fecha=None,
+         desc="Controles medidos al procesar las respuestas de la PNT (totales, coincidencias con las cifras oficiales, duplicados).",
+         cols=[("control", "texto", "", "Qué se verificó"), ("valor", "texto", "", "Resultado"), ("detalle", "texto", "", "Detalle")]),
+]
 
-def cobertura(t):
-    df = pd.read_csv(P7 / t["archivo"], dtype=str)
+
+def cobertura(t, carpeta=P7):
+    df = pd.read_csv(carpeta / t["archivo"], dtype=str)
     est = next((c for c in ("estacion", "clave", "estacion_clave") if c in df.columns), None)
     n_est = df[est].nunique() if est else None
     f = t["fecha"]
@@ -212,41 +209,55 @@ def cobertura(t):
     return len(df), n_est, per
 
 
-def documentar_tablas():
+def documentar_tablas(tablas=None, carpeta=P7, titulo=None, intro=None, relaciones=None):
+    tablas = TABLAS if tablas is None else tablas
     filas, md = [], []
-    for t in TABLAS:
-        n, ne, per = cobertura(t)
+    for t in tablas:
+        n, ne, per = cobertura(t, carpeta)
         t["_n"], t["_ne"], t["_per"] = n, ne, per
         for c in t["cols"]:
             filas.append(dict(tabla=t["archivo"], columna=c[0], tipo=c[1], unidad=c[2], descripcion=c[3]))
-        # verificar que el diccionario coincide con el archivo
-        real = list(pd.read_csv(P7 / t["archivo"], nrows=0).columns)
+        real = list(pd.read_csv(carpeta / t["archivo"], nrows=0).columns)  # el diccionario debe coincidir con el archivo
         if real != [c[0] for c in t["cols"]]:
             sys.exit(f"El diccionario de {t['archivo']} no coincide con sus columnas: {real}")
-    pd.DataFrame(filas).to_csv(P7 / "diccionario_columnas.csv", index=False)
+    pd.DataFrame(filas).to_csv(carpeta / "diccionario_columnas.csv", index=False)
 
-    L = [f"# 07_Datos_propios — tablas calculadas por el equipo (C7)\n",
-         f"Generado el {HOY} por `scripts/generar_documentacion.py`. Responsable: {RESPONSABLE}.\n",
-         "Insumo: registros diarios del SMN/CONAGUA (CLICOM) en `insumo_SMN_CONAGUA_estaciones/`. "
-         "Procesamiento: `scripts/procesar_datos.py` (limpieza, agregación, Gumbel) y `scripts/generar_csv_dashboard.py`. "
-         "Codificación UTF-8, separador coma, fechas ISO. **Celda vacía = sin dato (nunca 0 mm).** "
-         "La limpieza y los registros descartados están en [`../REPORTE_CALIDAD.md`](../REPORTE_CALIDAD.md).\n",
+    L = [titulo, "", f"Generado el {HOY} por `scripts/generar_documentacion.py`. Responsable: {RESPONSABLE}.\n", intro, "",
          "## Resumen de tablas\n",
-         "| Archivo | Fuente | Granularidad | Clave | Cobertura | Filas | Estaciones |",
-         "|---|---|---|---|---|---:|---:|"]
-    for t in TABLAS:
-        L.append(f"| [`{t['archivo']}`]({t['archivo']}) | {t['fuente']} | {t['gran']} | `{t['clave']}` | {t['_per']} | {t['_n']:,} | {t['_ne'] if t['_ne'] is not None else '—'} |")
-    L += ["", "## Cómo se relacionan",
-          "- La clave de cruce entre casi todas las tablas es la **clave de estación SMN** (`estacion`, `clave` o `estacion_clave`).",
-          "- `estaciones_claves_territoriales.csv` une cada estación con el municipio y la AGEB del INEGI (`cvegeo_ageb`) para cruzar con otras fuentes territoriales.",
-          "- Unidades: lluvia en **mm**; coordenadas en grados decimales (≈WGS84); fechas en formato ISO.", ""]
-    for t in TABLAS:
+         "| Archivo | Fuente | Granularidad | Clave | Cobertura | Filas |",
+         "|---|---|---|---|---|---:|"]
+    for t in tablas:
+        L.append(f"| [`{t['archivo']}`]({t['archivo']}) | {t['fuente']} | {t['gran']} | `{t['clave']}` | {t['_per']} | {t['_n']:,} |")
+    L += ["", "## Cómo se relacionan"] + relaciones + [""]
+    for t in tablas:
         L += [f"## `{t['archivo']}`", f"{t['desc']}", "",
               f"Fuente: {t['fuente']} · Granularidad: {t['gran']} · Clave: `{t['clave']}` · Cobertura: {t['_per']} · Filas: {t['_n']:,}", "",
               "| Columna | Tipo | Unidad | Descripción |", "|---|---|---|---|"]
         L += [f"| `{c[0]}` | {c[1]} | {c[2]} | {c[3]} |" for c in t["cols"]]
         L.append("")
-    (P7 / "README.md").write_text("\n".join(L), encoding="utf-8")
+    (carpeta / "README.md").write_text("\n".join(L), encoding="utf-8")
+
+
+def documentar_todo():
+    documentar_tablas(
+        TABLAS, P7, "# 07_Datos_propios — tablas calculadas por el equipo (C7)",
+        "Insumo: registros diarios del SMN/CONAGUA (CLICOM) en `insumo_SMN_CONAGUA_estaciones/`. Procesamiento: `scripts/procesar_datos.py` "
+        "(limpieza, agregación, Gumbel) y `scripts/generar_csv_dashboard.py`. UTF-8, coma como separador, fechas ISO. "
+        "**Celda vacía = sin dato (nunca 0 mm).** La limpieza y los registros descartados están en [`../REPORTE_CALIDAD.md`](../REPORTE_CALIDAD.md).",
+        ["- La clave de cruce entre casi todas las tablas es la **clave de estación SMN** (`estacion`, `clave` o `estacion_clave`).",
+         "- `estaciones_claves_territoriales.csv` une cada estación con el municipio y la AGEB del INEGI (`cvegeo_ageb`) para cruzar con otras fuentes territoriales.",
+         "- Unidades: lluvia en **mm**; coordenadas en grados decimales (≈WGS84); fechas en formato ISO."])
+    documentar_tablas(
+        TABLAS5, P5, "# 05_Solicitudes_gobierno — respuestas de la PNT (C5), limpias y anonimizadas",
+        "Fuente: respuestas a las solicitudes de acceso a la información enviadas el 01-oct-2026 por la PNT a CONAGUA (C5.1), el Ayuntamiento de Mérida (C5.2) y PROCIVY (C5.3). "
+        "Procesamiento: `scripts/procesar_pnt.py`. En `respuestas/` están las cartas oficiales (sin metadatos). "
+        "**Los Excel y PDF originales del Ayuntamiento traen nombre, teléfono, dirección y coordenadas de los solicitantes y NO se publican**: aquí solo hay conteos por día, por mes y AGEB, y por colonia. "
+        "Su huella SHA-256 está en `respuestas_pnt_procedencia.csv`. C5.1 (CONAGUA) respondió que tiene los datos pero solo los entrega en CD con pago de derechos de reproducción; aún no se recogen. "
+        "Controles y límites: [`../REPORTE_CALIDAD.md`](../REPORTE_CALIDAD.md).",
+        ["- `ayuntamiento_reportes_drenaje_dia.csv` y `ayuntamiento_reportes_drenaje_ageb_mes.csv` vienen del mismo XLS (2024–oct-2026); la primera conserva el canal de llegada y la segunda la ubicación por AGEB.",
+         "- `origen = trabajo_programado` son programas del propio Ayuntamiento (sin coordenadas ni relación con la lluvia); para ligar reportes con lluvia hay que usar `origen = solicitud`.",
+         "- `ayuntamiento_desague_calles_historico_dia.csv` (2018–2022, anexo PDF) y los reportes de 2024–2026 son fuentes distintas con un hueco en 2023: no se deben unir sin tenerlo presente.",
+         "- `cvegeo_ageb` se une con `estaciones_claves_territoriales.csv` de `07_Datos_propios` para relacionar reportes con la lluvia de la estación más cercana."])
 
 
 # --------------------------------------------------------------------------- 3. manifiestos
@@ -255,7 +266,8 @@ REGLAS = [  # (subcadena en la ruta relativa a datos/, fuente) — la primera qu
     ("conagua_sih", "C2.3"), ("conagua_smn", "C2.1"), ("cenapred", "C2.2"), ("declaratorias", "C2.2"),
     ("SIEGY_indicadores", "C3.1"), ("Boletin_2026_03", "C3.2"), ("Boletin_2025_10", "C3.3"),
     ("Atlas_Riesgos", "C4.2"), ("Estudio_Riesgos", "C4.3"), ("PACMUN", "(apoyo de C4)"),
-    ("05_Solicitudes", "C5"), ("sivea", "C6.1"), ("procivy", "C6.2"), ("diario_yucatan", "C6.3"),
+    ("C5.1_conagua", "C5.1"), ("C5.2_ayuntamiento", "C5.2"), ("C5.3_procivy", "C5.3"), ("procivy_eventos", "C5.3"),
+    ("ayuntamiento_", "C5.2"), ("05_Solicitudes", "C5"), ("sivea", "C6.1"), ("procivy", "C6.2"), ("diario_yucatan", "C6.3"),
     ("insumo_SMN", "C7.1"), ("indices_lluvia", "C7.2"), ("periodos_retorno", "C7.2"), ("tendencias", "C7.2"),
     ("eventos_extra", "C7.3"), ("07_Datos_propios", "C7.1"),
     ("MDT_5m", "C8.1"), ("MDT_1_5m", "C8.1"), ("MDS_1_5m", "C8.1"), ("indice_cartas", "C8.1"),
@@ -375,6 +387,19 @@ def reporte():
           "- Los sectores del dashboard (Norte, Poniente, Oriente) son aproximados por coordenadas; **el Centro no tiene estación**.",
           "- El cruce estación–AGEB (`estaciones_claves_territoriales.csv`) depende del datum de las coordenadas del SMN; una estación cerca del borde de una AGEB podría caer en la vecina.",
           "- Los datos del SMN son preliminares y no se contrastaron contra otra red de medición.\n",
+          "## Respuestas de la PNT (C5): controles y límites",
+          "Procesadas con `scripts/procesar_pnt.py`; los controles salen de [`05_Solicitudes_gobierno/controles_calidad_pnt.csv`](05_Solicitudes_gobierno/controles_calidad_pnt.csv).\n",
+          "| Control | Resultado | Detalle |", "|---|---|---|"] + \
+         [f"| {r.control} | {r.valor} | {r.detalle} |" for r in pd.read_csv(P5 / "controles_calidad_pnt.csv", dtype=str).fillna("").itertuples()] + [
+          "",
+          "Límites que conviene tener presentes:",
+          "- Los reportes de drenaje son **registros administrativos** del Ayuntamiento: miden la demanda atendida, no la superficie inundada, y dependen de que la gente llame.",
+          "- El 31 % de los reportes de 2024–2026 es trabajo programado del propio Ayuntamiento; no se relaciona con la lluvia y no tiene coordenadas. Para analizar lluvia contra afectaciones hay que filtrar `origen = solicitud`.",
+          "- No hay datos de 2023, y los de 2018–2022 (anexo PDF) y 2024–2026 (XLS) vienen de entregas distintas; no se pueden comparar sin cuidado.",
+          "- El Ayuntamiento declaró que **no existen** registros de pluviómetros municipales ni un listado de puntos de encharcamiento recurrente.",
+          "- PROCIVY solo entregó desde octubre de 2024 y sus fechas venían en texto libre; un registro con año 2027 se conservó sin corregir y se marcó.",
+          "- C5.1 (CONAGUA): la información existe pero aún no se recoge (CD con pago de derechos); no hay datos de esa respuesta en el repositorio.",
+          "- Los originales con datos personales no están en el repositorio; su huella SHA-256 está en `05_Solicitudes_gobierno/respuestas_pnt_procedencia.csv`.\n",
           "## Procedencia",
           "Cada fuente y archivo está en [`MANIFIESTO_FUENTES.csv`](MANIFIESTO_FUENTES.csv) y [`MANIFIESTO_ARCHIVOS.csv`](MANIFIESTO_ARCHIVOS.csv) "
           "(URL, versión, fecha de extracción, licencia, responsable, tamaño y SHA-256).\n"]
@@ -385,7 +410,7 @@ def reporte():
 if __name__ == "__main__":
     k = claves_territoriales()
     print(k[["clave", "cve_mun", "nom_mun", "cvegeo_ageb", "ubicacion"]].to_string(index=False))
-    documentar_tablas()
+    documentar_todo()
     n = manifiestos()
     print(f"manifiesto de archivos: {n}")
     reporte()
