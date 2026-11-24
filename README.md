@@ -24,13 +24,23 @@ Detalle del subtema, cómo regenerarlo todo y pendientes: [`subtema_1_precipitac
 | C2 datos.gob.mx (3) | Completas |
 | C3 SIEGY (3) | C3.1 y C3.2 completas; **C3.3 parcial** (solo el boletín en PDF; el tablero Power BI no se puede descargar) |
 | C4 GeoPortal / Ayuntamiento (3) | C4.2 y C4.3 descargadas (PDF pesados fuera de Git); **C4.1 solo consulta en línea** (visor WMS) |
-| C5 Solicitudes PNT (3) | **Sin respuestas.** Enviadas el 01/10/2026; se dan por descartadas |
+| C5 Solicitudes PNT (3) | Enviadas el 01/10/2026 (plazo con prórroga: 17/11). **Pendiente de verificar la respuesta en la PNT** ("Mi Historial"); aquí no hay datos todavía |
 | C6 Scraping (3) | **Solo muestras** de octubre-2026 + scripts de ejemplo |
 | C7 Datos propios (3) | Completas (series, índices extremos, periodos de retorno, eventos ≥100 mm) |
-| C8 LiDAR (3) | C8.1 y C8.2 descargadas; C8.3 (NASA GEDI/ICESat-2) descargada pero **en revisión** |
+| C8 LiDAR (3) | C8.1 y C8.2 descargadas; C8.3 (NASA GEDI/ICESat-2) descargada y recortada a Mérida (única fuente LiDAR real del catálogo) |
 | C9 AR (3) | Completas (edificios de Overture, alturas derivadas, OSM) |
 
 > **Los «LiDAR» de INEGI para Mérida (C8.1) son fotogramétricos**, no un vuelo LiDAR. Ver [`datos/08_LiDAR/README.md`](subtema_1_precipitacion/datos/08_LiDAR/README.md).
+
+## Documentación de los datos
+
+| Qué | Archivo |
+|---|---|
+| Diccionario de columnas, clave, granularidad, cobertura y unidades de cada tabla | [`datos/07_Datos_propios/README.md`](subtema_1_precipitacion/datos/07_Datos_propios/README.md) y [`diccionario_columnas.csv`](subtema_1_precipitacion/datos/07_Datos_propios/diccionario_columnas.csv) |
+| Procedencia de las 27 fuentes (URL, versión, fecha de extracción, licencia, responsable) | [`datos/MANIFIESTO_FUENTES.csv`](subtema_1_precipitacion/datos/MANIFIESTO_FUENTES.csv) |
+| Cada archivo con tamaño, SHA-256 y si está en Git | [`datos/MANIFIESTO_ARCHIVOS.csv`](subtema_1_precipitacion/datos/MANIFIESTO_ARCHIVOS.csv) |
+| Reporte de calidad y registros descartados | [`datos/REPORTE_CALIDAD.md`](subtema_1_precipitacion/datos/REPORTE_CALIDAD.md), [`meses_invalidados.csv`](subtema_1_precipitacion/datos/07_Datos_propios/meses_invalidados.csv) |
+| Clave territorial (municipio y AGEB del INEGI) de cada estación | [`estaciones_claves_territoriales.csv`](subtema_1_precipitacion/datos/07_Datos_propios/estaciones_claves_territoriales.csv) |
 
 ## Calidad de datos: ceros que eran faltantes
 

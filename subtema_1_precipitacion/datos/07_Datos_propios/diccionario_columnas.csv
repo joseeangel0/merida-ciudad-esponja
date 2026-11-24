@@ -1,0 +1,88 @@
+tabla,columna,tipo,unidad,descripcion
+smn_catalogo_estaciones.csv,clave,texto,,Clave de estación del SMN (CLICOM)
+smn_catalogo_estaciones.csv,nombre,texto,,Nombre de la estación
+smn_catalogo_estaciones.csv,municipio,texto,,Municipio según el SMN
+smn_catalogo_estaciones.csv,situacion,texto,,OPERANDO o SUSPENDIDA
+smn_catalogo_estaciones.csv,latitud,decimal,grados,"Latitud (datum del SMN, ≈WGS84)"
+smn_catalogo_estaciones.csv,longitud,decimal,grados,Longitud
+smn_catalogo_estaciones.csv,altitud_msnm,entero,m,Altitud sobre el nivel del mar
+smn_catalogo_estaciones.csv,inicio,fecha,,Primer día con dato válido
+smn_catalogo_estaciones.csv,fin,fecha,,Último día con dato válido
+smn_catalogo_estaciones.csv,dias_con_dato,entero,días,Días con dato válido (tras la limpieza)
+smn_catalogo_estaciones.csv,pct_completitud,decimal,%,Días con dato entre los días de inicio a fin
+smn_precip_diaria.csv,estacion,texto,,Clave de estación
+smn_precip_diaria.csv,fecha,fecha,AAAA-MM-DD,Día
+smn_precip_diaria.csv,precip_mm,decimal,mm/día,Precipitación acumulada en 24 h; vacío = sin dato
+smn_precip_mensual.csv,estacion,texto,,Clave de estación
+smn_precip_mensual.csv,fecha,texto,AAAA-MM,Mes
+smn_precip_mensual.csv,precip_mm,decimal,mm/mes,Suma del mes; vacío si completo = False
+smn_precip_mensual.csv,dias_con_dato,entero,días,Días del mes con dato
+smn_precip_mensual.csv,max_diaria_mm,decimal,mm,Máximo diario del mes
+smn_precip_mensual.csv,dias_mes,entero,días,Días del mes
+smn_precip_mensual.csv,completo,booleano,,True si dias_con_dato ≥ 80 % de dias_mes
+smn_precip_anual.csv,estacion,texto,,Clave de estación
+smn_precip_anual.csv,precip_mm,decimal,mm/año,Suma anual; vacío si meses_validos < 12
+smn_precip_anual.csv,meses_validos,entero,meses,Meses completos del año
+smn_precip_anual.csv,dias_lluvia_>=1mm,entero,días,Días con ≥1 mm
+smn_precip_anual.csv,dias_>=50mm,entero,días,Días con ≥50 mm
+smn_precip_anual.csv,dias_>=100mm,entero,días,Días con ≥100 mm
+smn_precip_anual.csv,max_diaria_mm,decimal,mm,Máximo diario del año (con los días válidos)
+smn_precip_anual.csv,anio,entero,AAAA,Año
+indices_lluvia_extrema_por_anio.csv,estacion,texto,,Clave de estación
+indices_lluvia_extrema_por_anio.csv,anio,entero,AAAA,Año
+indices_lluvia_extrema_por_anio.csv,precip_mm,decimal,mm/año,Total anual (vacío si el año no está completo)
+indices_lluvia_extrema_por_anio.csv,dias_lluvia_>=1mm,entero,días,Días con ≥1 mm
+indices_lluvia_extrema_por_anio.csv,dias_>=50mm,entero,días,Días con ≥50 mm
+indices_lluvia_extrema_por_anio.csv,dias_>=100mm,entero,días,Días con ≥100 mm
+indices_lluvia_extrema_por_anio.csv,max_diaria_mm,decimal,mm,Máximo diario del año
+indices_lluvia_extrema_por_anio.csv,meses_validos,entero,meses,Meses completos del año
+periodos_retorno_lluvia_24h.csv,estacion,texto,,Clave de estación (solo 31097 y 31044 tienen serie suficiente)
+periodos_retorno_lluvia_24h.csv,periodo_retorno_anios,entero,años,Periodo de retorno T
+periodos_retorno_lluvia_24h.csv,lluvia_24h_mm,decimal,mm,Lluvia en 24 h esperada una vez cada T años
+periodos_retorno_lluvia_24h.csv,anios_usados,entero,años,Años completos usados en el ajuste
+periodos_retorno_lluvia_24h.csv,max_observado_mm,decimal,mm,Máximo diario observado en la serie
+tendencias_31097.csv,estacion,texto,,Clave de estación
+tendencias_31097.csv,tendencia_precip_mm_por_decada,decimal,mm/década,Pendiente del total anual
+tendencias_31097.csv,anios_completos,entero,años,Años completos usados
+tendencias_31097.csv,tendencia_dias_>=50mm_por_decada,decimal,días/década,Pendiente de los días con ≥50 mm
+climatologia_mensual_31044_1991_2020.csv,mes,entero,1–12,Mes del año
+climatologia_mensual_31044_1991_2020.csv,promedio_mm,decimal,mm,Promedio mensual
+climatologia_mensual_31044_1991_2020.csv,mediana_mm,decimal,mm,Mediana mensual
+climatologia_mensual_31044_1991_2020.csv,minimo_mm,decimal,mm,Mínimo mensual
+climatologia_mensual_31044_1991_2020.csv,maximo_mm,decimal,mm,Máximo mensual
+climatologia_mensual_31044_1991_2020.csv,anios_validos,entero,años,Años con ese mes completo
+promedio_anual_por_estacion_1991_2020.csv,clave,texto,,Clave de estación
+promedio_anual_por_estacion_1991_2020.csv,nombre,texto,,Nombre
+promedio_anual_por_estacion_1991_2020.csv,latitud,decimal,grados,Latitud
+promedio_anual_por_estacion_1991_2020.csv,longitud,decimal,grados,Longitud
+promedio_anual_por_estacion_1991_2020.csv,precip_anual_media_mm,decimal,mm/año,Media de los años completos 1991–2020
+promedio_anual_por_estacion_1991_2020.csv,anios_completos,entero,años,Años completos usados
+eventos_extraordinarios_>=100mm.csv,estacion,texto,,Clave de estación
+eventos_extraordinarios_>=100mm.csv,fecha,fecha,AAAA-MM-DD,Día
+eventos_extraordinarios_>=100mm.csv,precip_mm,decimal,mm/24 h,Lluvia del día
+eventos_extraordinarios_>=100mm.csv,nombre,texto,,Nombre de la estación
+eventos_extraordinarios_>=100mm.csv,evento_asociado,texto,,Ciclón de las reseñas del SMN cuando el día cae en su ventana; vacío si no hay
+dashboard_lluvia_mensual_por_estacion.csv,fecha,fecha,AAAA-MM-01,Primer día del mes
+dashboard_lluvia_mensual_por_estacion.csv,sector,texto,,"Norte, Poniente u Oriente (aproximado por coordenadas; el Centro no tiene estación)"
+dashboard_lluvia_mensual_por_estacion.csv,estacion_clave,texto,,Clave de estación
+dashboard_lluvia_mensual_por_estacion.csv,estacion,texto,,Nombre de la estación
+dashboard_lluvia_mensual_por_estacion.csv,lluvia_mm,decimal,mm/mes,Suma del mes; vacío si no hay ≥25 días con dato
+dashboard_lluvia_mensual_por_estacion.csv,dias_con_lluvia,entero,días,Días con ≥1 mm
+dashboard_lluvia_mensual_por_estacion.csv,eventos_intensos,entero,días,Días con ≥50 mm en 24 h
+dashboard_lluvia_mensual_por_estacion.csv,dias_con_dato,entero,días,Días del mes con dato
+dashboard_lluvia_mensual_por_estacion.csv,nota,texto,,Motivo si el mes quedó vacío
+meses_invalidados.csv,estacion,texto,,Clave de estación
+meses_invalidados.csv,mes,texto,AAAA-MM,Mes descartado
+meses_invalidados.csv,dias_con_dato,entero,días,Días que el original traía con dato (todos en 0.0)
+meses_invalidados.csv,motivo,texto,,Condición de la regla que se cumplió
+estaciones_claves_territoriales.csv,clave,texto,,Clave de estación
+estaciones_claves_territoriales.csv,nombre,texto,,Nombre
+estaciones_claves_territoriales.csv,latitud,decimal,grados,Latitud
+estaciones_claves_territoriales.csv,longitud,decimal,grados,Longitud
+estaciones_claves_territoriales.csv,cve_ent,texto,,Entidad (31 = Yucatán)
+estaciones_claves_territoriales.csv,cve_mun,texto,,Municipio (050 = Mérida)
+estaciones_claves_territoriales.csv,nom_mun,texto,,Nombre del municipio
+estaciones_claves_territoriales.csv,cve_loc,texto,,Localidad (si cae en AGEB urbana)
+estaciones_claves_territoriales.csv,cve_ageb,texto,,AGEB urbana
+estaciones_claves_territoriales.csv,cvegeo_ageb,texto,,Clave geoestadística completa de la AGEB (13 dígitos)
+estaciones_claves_territoriales.csv,ubicacion,texto,,Cómo se resolvió el cruce espacial

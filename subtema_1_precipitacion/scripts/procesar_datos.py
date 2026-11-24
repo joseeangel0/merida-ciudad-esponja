@@ -59,17 +59,18 @@ def limpiar_ceros_espurios(df):
     sospechoso si:
       - cae en la temporada lluviosa (jun-oct; en Mérida nunca llueve 0 mm todo el mes), o
       - forma parte de una racha de >= 3 meses consecutivos en cero en la misma estación.
-    Devuelve (df limpio, lista de meses 'YYYY-MM' invalidados).
+    Devuelve (df limpio, {"YYYY-MM": (días con dato, motivo)}).
     """
     d = df.set_index("fecha")["precip_mm"]
     tot = d.resample("MS").sum(min_count=1)
     n = d.resample("MS").count()
     completo = n >= UMBRAL_DIAS_MES * tot.index.days_in_month
     cero = completo & (tot == 0)
-    sosp = cero & tot.index.month.isin(range(6, 11))
+    lluviosa = cero & tot.index.month.isin(range(6, 11))
+    racha = pd.Series(False, index=tot.index)
 
     idx = tot.index.year * 12 + tot.index.month
-    corr, ini = 0, None
+    corr, ini, ult = 0, None, None
     for i, (flag, k) in enumerate(zip(cero.to_numpy(), idx)):
         if flag and corr and k == ult + 1:
             corr += 1
@@ -79,13 +80,21 @@ def limpiar_ceros_espurios(df):
             corr = 0
         ult = k
         if corr >= 3:
-            sosp.iloc[ini:i + 1] = True
-    meses = [t.strftime("%Y-%m") for t in tot.index[sosp.to_numpy()]]
-    if meses:
-        mask = df["fecha"].dt.strftime("%Y-%m").isin(meses)
+            racha.iloc[ini:i + 1] = True
+    sosp = lluviosa | racha
+    motivos = {}
+    for t in tot.index[sosp.to_numpy()]:
+        m = []
+        if lluviosa[t]:
+            m.append("mes de jun-oct con 0.0 mm")
+        if racha[t]:
+            m.append("racha de 3 o más meses seguidos con 0.0 mm")
+        motivos[t.strftime("%Y-%m")] = (int(n[t]), "; ".join(m))
+    if motivos:
+        mask = df["fecha"].dt.strftime("%Y-%m").isin(motivos)
         df = df.copy()
         df.loc[mask, "precip_mm"] = np.nan
-    return df, meses
+    return df, motivos
 
 
 def agregar(df):
@@ -113,13 +122,15 @@ def agregar(df):
     return m.reset_index(), a.reset_index()
 
 
-catalogo, diarios, mensuales, anuales = [], [], [], []
+catalogo, diarios, mensuales, anuales, meses_invalidados = [], [], [], [], []
 for f in sorted(SMN_DIR.glob("dia*.txt")):
     meta, df = leer_smn(f)
     clave = meta.get("ESTACIÓN") or f.stem[3:]
     df, invalidados = limpiar_ceros_espurios(df)
     if invalidados:
         print(f"  {clave}: {len(invalidados)} meses con 0.0 mm sospechoso -> sin dato")
+        meses_invalidados += [{"estacion": clave, "mes": ym, "dias_con_dato": n, "motivo": mot}
+                              for ym, (n, mot) in sorted(invalidados.items())]
     validos = df.dropna(subset=["precip_mm"])
     catalogo.append({
         "clave": clave, "nombre": meta.get("NOMBRE"), "municipio": meta.get("MUNICIPIO"),
@@ -148,6 +159,7 @@ smn_a = smn_a.drop(columns="fecha")
 
 # ================================================================ 1. Series limpias y climatología
 cat.to_csv(OUT / "smn_catalogo_estaciones.csv", index=False)
+pd.DataFrame(meses_invalidados).to_csv(OUT / "meses_invalidados.csv", index=False)
 smn_d.to_csv(OUT / "smn_precip_diaria.csv", index=False, date_format="%Y-%m-%d")
 smn_m.to_csv(OUT / "smn_precip_mensual.csv", index=False, date_format="%Y-%m")
 smn_a.to_csv(OUT / "smn_precip_anual.csv", index=False)
