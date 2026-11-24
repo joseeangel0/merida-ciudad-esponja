@@ -36,9 +36,9 @@
 \section{Resumen}
 
 \begin{itemize}[leftmargin=1.2em,itemsep=2pt]
-\item \textbf{27 fuentes} en las 9 categorías del proyecto, 3 por categoría. De ellas, 22 ya tienen datos en la carpeta
+\item \textbf{27 fuentes} en las 9 categorías del proyecto, 3 por categoría. De ellas, 24 ya tienen datos en la carpeta
   (descargados, generados por nosotros o con script y muestra de scraping), 2 solo se pueden consultar en línea
-  y 3 están pendientes (las 3 solicitudes de información, enviadas el 1 de octubre).
+  y 1 está pendiente de recoger (C5.1: CONAGUA respondió que tiene los datos horarios y los entrega en CD por \$13 MXN).
 \item \textbf{Cuánto llueve:} unos \textbf{1,065 mm al año} en el centro de Mérida (estación 31044, promedio 1991–2020).
 \item \textbf{Cuándo llueve:} el \textbf{82\%} cae de mayo a octubre, con picos en junio (184 mm)
   y septiembre (181 mm). Julio baja a 132 mm (canícula).
@@ -256,42 +256,42 @@ Enlace & \url{https://merida.gob.mx/sustentable/contenidos/doc/estudioRiesgosVul
 \subsection{C5 · Gobierno (solicitudes de información)}
 {\small\color{tinta2}Carpeta: \nolinkurl{datos/05_Solicitudes_gobierno/}}
 
-\begin{ficha}{C5.1 · Solicitud a CONAGUA/SMN: lluvia cada 10 min de las EMA/estaciones sinópticas de Mérida}
+\begin{ficha}{C5.1 · Solicitud a CONAGUA/SMN: lluvia de las estaciones automáticas y sinópticas de Mérida}
 \begin{tabularx}{\linewidth}{@{}>{\leavevmode\color{tinta2}\bfseries\raggedright\arraybackslash}p{2.9cm}X@{}}
 Institución & CONAGUA – SMN (vía Plataforma Nacional de Transparencia) \\
-Qué contiene & Precipitación cada 10 min, máximos en 1 h y 24 h, metadatos \\
-Periodo · resolución & Histórico completo disponible · 10 min, puntual \\
-Formato · acceso & Lo que entregue el sujeto obligado (CSV/XLSX) · Solicitud vía PNT (20 días hábiles + 10 de prórroga) \\
+Qué contiene & Respuesta: lluvia diaria y horaria del Observatorio de Mérida (76644) y de las estaciones «Mérida» y «Mérida CONAGUA», más metadatos de las estaciones \\
+Periodo · resolución & Desde el inicio de operación de cada estación · Diaria y horaria, puntual \\
+Formato · acceso & ZIP + Excel (por su peso se entrega en CD o por SEPOMEX) · Respuesta recibida el 30-oct-2026; la entrega requiere pagar derechos de reproducción (\$13 MXN) \\
 Confiabilidad & Alta \\
-Limitaciones & Hay que esperar la respuesta; el visor público solo guarda \textasciitilde{}90 días y no tiene estación «Mérida». \\
-Uso propuesto & Intensidad (mm/h): la variable que realmente explica los encharcamientos. \\
-Estado & Pendiente: respuesta (folio 340009400252326, enviada 01-oct-2026) · {\small\nolinkurl{solicitudes_sugeridas.md}} \\
+Limitaciones & Los archivos no caben en la PNT: hay que pagar el CD y recogerlo en Ciudad de México (con cita) o pedir envío con costo. No calcularon los máximos de 1 h y 24 h; se derivan de los datos entregados. \\
+Uso propuesto & Intensidad (mm/h): la variable que realmente explica los encharcamientos. Es la única fuente de lluvia horaria de las estaciones de Mérida. \\
+Estado & Pendiente: respuesta recibida (folio 340009400252326, 30-oct-2026); datos por recoger (CD, \$13 MXN) · {\small\nolinkurl{respuestas/C5.1_conagua_340009400252326_respuesta.pdf}} \\
 Enlace & \url{https://www.plataformadetransparencia.org.mx/} \\
 \end{tabularx}
 \end{ficha}
 \begin{ficha}{C5.2 · Solicitud al Ayuntamiento de Mérida: pluviómetros municipales y reportes de encharcamiento}
 \begin{tabularx}{\linewidth}{@{}>{\leavevmode\color{tinta2}\bfseries\raggedright\arraybackslash}p{2.9cm}X@{}}
 Institución & Ayuntamiento de Mérida (Protección Civil, Servicios Públicos, Obras Públicas, Ayuntatel) \\
-Qué contiene & Registros de la red municipal de estaciones; reportes de encharcamiento por evento desde 2015 \\
-Periodo · resolución & 2015–2026 · Por colonia / punto \\
-Formato · acceso & Lo que entregue el sujeto obligado · Solicitud vía PNT \\
-Confiabilidad & Alta (si se entrega) \\
-Limitaciones & No se encontraron solicitudes previas ya respondidas; verificar nombre exacto del sujeto obligado. \\
-Uso propuesto & Lluvia medida dentro de la ciudad y su efecto (puente con los subtemas 2 y 8). \\
-Estado & Pendiente: respuesta (folio 1190579126000596, enviada 01-oct-2026) · {\small\nolinkurl{solicitudes_sugeridas.md}} \\
+Qué contiene & Reportes ciudadanos de drenaje y desagüe de calles inundadas (65,448 de 2024 a oct-2026 y 1,583 de 2018–2022), con servicio, procedencia, fecha de atención y litros desalojados \\
+Periodo · resolución & 2018–2022 y 2024–oct-2026 (falta 2023) · Por reporte; se publica por día y por AGEB \\
+Formato · acceso & XLS, XLSX y PDF originales (con datos personales, no publicados) $\rightarrow$ CSV anonimizados · Respuesta recibida (27 a 29-oct-2026); los originales traen nombre, teléfono y dirección de solicitantes \\
+Confiabilidad & Alta (registro administrativo; sin validar contra campo) \\
+Limitaciones & Declaró inexistentes los registros de pluviómetros municipales y el listado de puntos de encharcamiento recurrente. El 31 \% de los reportes es trabajo programado, sin coordenadas. No hay datos de 2023. \\
+Uso propuesto & Primer cruce entre lluvia y afectaciones reales del municipio (puente con los subtemas 2, 5 y 8). \\
+Estado & Descargado: respuesta de la PNT recibida y procesada (folio 1190579126000596, 27 a 29-oct-2026) · {\small\nolinkurl{ayuntamiento_*.csv; respuestas/C5.2_*}} \\
 Enlace & \url{https://www.plataformadetransparencia.org.mx/} \\
 \end{tabularx}
 \end{ficha}
 \begin{ficha}{C5.3 · Solicitud a Secretaría General de Gobierno / PROCIVY: emergencias por lluvia en Mérida}
 \begin{tabularx}{\linewidth}{@{}>{\leavevmode\color{tinta2}\bfseries\raggedright\arraybackslash}p{2.9cm}X@{}}
 Institución & Gobierno del Estado de Yucatán – Protección Civil (PROCIVY) \\
-Qué contiene & Emergencias atendidas por lluvias en Mérida y declaratorias estatales \\
-Periodo · resolución & 2000–2026 · Por evento \\
-Formato · acceso & Lo que entregue el sujeto obligado · Solicitud vía PNT \\
-Confiabilidad & Alta (si se entrega) \\
-Limitaciones & El órgano garante estatal cambió en 2025; verificar a quién se dirige. \\
-Uso propuesto & Completar la línea de tiempo de eventos con su impacto real. \\
-Estado & Pendiente: respuesta (folio 1191217326000207, enviada 01-oct-2026) · {\small\nolinkurl{solicitudes_sugeridas.md}} \\
+Qué contiene & Registro de 18 fenómenos meteorológicos con su efecto en Mérida: alerta SIAT, afectaciones, viviendas y personas afectadas, refugios, lámina de lluvia y declaratorias \\
+Periodo · resolución & Oct-2024 a oct-2026 (administración actual) · Por evento \\
+Formato · acceso & Excel $\rightarrow$ CSV · Respuesta recibida (28 a 30-oct-2026) \\
+Confiabilidad & Media (fechas en texto libre) \\
+Limitaciones & Solo entregó desde octubre de 2024 (se pidió desde 2000). La lámina de lluvia remite al SMN sin cifra y un registro dice «10 JUL. 2027» (probable error de captura, no se corrigió). \\
+Uso propuesto & Completar la línea de tiempo de eventos con su impacto real y las declaratorias. \\
+Estado & Descargado: respuesta de la PNT recibida y procesada (folio 1191217326000207, 30-oct-2026) · {\small\nolinkurl{procivy_eventos_2024_2026.csv; respuestas/C5.3_*}} \\
 Enlace & \url{https://www.plataformadetransparencia.org.mx/} \\
 \end{tabularx}
 \end{ficha}
@@ -583,9 +583,9 @@ Los círculos son las estaciones del SMN con al menos 10 años completos; el nú
 
 \section{Pendientes}
 \begin{enumerate}[leftmargin=1.4em,itemsep=2pt]
-\item Dar seguimiento a las 3 solicitudes de información (C5.1–C5.3), enviadas el 1 de octubre; vencen el 30 de octubre (con prórroga, el 17 de noviembre).
+\item Recoger el CD de CONAGUA (C5.1) con la lluvia diaria y horaria de las estaciones de Mérida (\$13 MXN de derechos de reproducción) y procesarlo.
 \item Programar el scraping del SMN (C6.1) para que corra cada semana y vaya acumulando la serie de intensidad.
-\item Conectar \texttt{07\_Datos\_propios/} con el prototipo HTML.
+\item El tablero de Power BI de SIEGY (C3.3) y las capas del Geoportal de Mérida (C4.1) solo se pueden consultar en línea.
 \end{enumerate}
 
 \end{document}

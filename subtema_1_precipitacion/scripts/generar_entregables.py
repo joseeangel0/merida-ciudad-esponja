@@ -392,7 +392,7 @@ documento = rf"""\documentclass[11pt,a4paper]{{article}}
 \begin{{itemize}}[leftmargin=1.2em,itemsep=2pt]
 \item \textbf{{27 fuentes}} en las 9 categorías del proyecto, 3 por categoría. De ellas, {con_datos} ya tienen datos en la carpeta
   (descargados, generados por nosotros o con script y muestra de scraping), {estado_n['Parcial'] + estado_n['Documentado']} solo se pueden consultar en línea
-  y {estado_n['Pendiente']} están pendientes (las 3 solicitudes de información, enviadas el 1 de octubre).
+  y {estado_n['Pendiente']} está pendiente de recoger (C5.1: CONAGUA respondió que tiene los datos horarios y los entrega en CD por \$13 MXN).
 \item \textbf{{Cuánto llueve:}} unos \textbf{{{clim_tot:,.0f} mm al año}} en el centro de Mérida (estación 31044, promedio 1991–2020).
 \item \textbf{{Cuándo llueve:}} el \textbf{{{pct_lluvias:.0f}\%}} cae de mayo a octubre, con picos en junio ({clim.promedio_mm[5]:.0f} mm)
   y septiembre ({clim.promedio_mm[8]:.0f} mm). Julio baja a {clim.promedio_mm[6]:.0f} mm (canícula).
@@ -516,9 +516,9 @@ Los círculos son las estaciones del SMN con al menos 10 años completos; el nú
 
 \section{{Pendientes}}
 \begin{{enumerate}}[leftmargin=1.4em,itemsep=2pt]
-\item Dar seguimiento a las 3 solicitudes de información (C5.1–C5.3), enviadas el 1 de octubre; vencen el 30 de octubre (con prórroga, el 17 de noviembre).
+\item Recoger el CD de CONAGUA (C5.1) con la lluvia diaria y horaria de las estaciones de Mérida (\$13 MXN de derechos de reproducción) y procesarlo.
 \item Programar el scraping del SMN (C6.1) para que corra cada semana y vaya acumulando la serie de intensidad.
-\item Conectar \texttt{{07\_Datos\_propios/}} con el prototipo HTML.
+\item El tablero de Power BI de SIEGY (C3.3) y las capas del Geoportal de Mérida (C4.1) solo se pueden consultar en línea.
 \end{{enumerate}}
 
 \end{{document}}
