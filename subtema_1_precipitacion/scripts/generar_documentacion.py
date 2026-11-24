@@ -36,7 +36,7 @@ DATOS = AQUI.parent / "datos"
 P7 = DATOS / "07_Datos_propios"
 HOY = date.today().isoformat()
 
-RESPONSABLE = "Equipo 1 (José Pech)"  # supuesto: confirmar y ajustar si cambia por fuente
+RESPONSABLE = "Equipo 1 (Diego Loria, Rama Marin, José Ángel Pech)"  # todos los integrantes, por decisión del equipo
 
 # Fecha en que se bajó cada fuente (no se usa la fecha del archivo: un clon de Git la cambia).
 EXTRACCION = {f["id"]: "2026-10-01" for f in FUENTES}

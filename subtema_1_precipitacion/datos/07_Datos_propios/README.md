@@ -1,6 +1,6 @@
 # 07_Datos_propios — tablas calculadas por el equipo (C7)
 
-Generado el 2026-11-24 por `scripts/generar_documentacion.py`. Responsable: Equipo 1 (José Pech).
+Generado el 2026-11-24 por `scripts/generar_documentacion.py`. Responsable: Equipo 1 (Diego Loria, Rama Marin, José Ángel Pech).
 
 Insumo: registros diarios del SMN/CONAGUA (CLICOM) en `insumo_SMN_CONAGUA_estaciones/`. Procesamiento: `scripts/procesar_datos.py` (limpieza, agregación, Gumbel) y `scripts/generar_csv_dashboard.py`. Codificación UTF-8, separador coma, fechas ISO. **Celda vacía = sin dato (nunca 0 mm).** La limpieza y los registros descartados están en [`../REPORTE_CALIDAD.md`](../REPORTE_CALIDAD.md).
 

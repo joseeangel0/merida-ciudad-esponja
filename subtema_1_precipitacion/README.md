@@ -40,4 +40,3 @@ Para agregar o editar una fuente, modifica `scripts/fuentes.py`; de ahí salen e
 1. **C5 (solicitudes PNT, enviadas el 01-oct-2026):** el plazo con prórroga venció el 17-nov-2026. Falta **verificar la respuesta en la PNT** ("Mi Historial"). Si no hubo respuesta, se puede presentar un recurso de revisión. Folios en `datos/05_Solicitudes_gobierno/`.
 2. Programar el scraping del SMN para que corra cada semana (las estaciones automáticas solo guardan 90 días). Hoy C6 solo tiene muestras.
 3. Tablero de Power BI de C3.3 y capas del Geoportal de Mérida (C4.1): solo se pueden consultar en línea.
-4. Confirmar el responsable de cada fuente en `datos/MANIFIESTO_FUENTES.csv` (hoy figura "Equipo 1 (José Pech)" en todas).
