@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lluvia en Mérida — Ciudad Esponja</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #f4f3ef; --surface-1: #fcfcfb; --border: #e3e2dc; --grid: #ebeae5;
+    --text-primary: #0b0b0b; --text-secondary: #52514e; --text-muted: #6d6c67;
+    --accent: #256abf; --accent-ink: #ffffff; --chip-bg: #f0efea; --warn-bg: #fff6df; --warn-border: #e6cf8a;
+    --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --bg: #121211; --surface-1: #1a1a19; --border: #2e2e2b; --grid: #2a2a27;
+      --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #9a998f;
+      --accent: #6da7ec; --accent-ink: #0b0b0b; --chip-bg: #242422; --warn-bg: #2b2616; --warn-border: #6b5a22;
+      --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #121211; --surface-1: #1a1a19; --border: #2e2e2b; --grid: #2a2a27;
+    --text-primary: #f0efec; --text-secondary: #c3c2b7; --text-muted: #9a998f;
+    --accent: #6da7ec; --accent-ink: #0b0b0b; --chip-bg: #242422; --warn-bg: #2b2616; --warn-border: #6b5a22;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text-primary);
+         font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 24px 16px 56px; }
+  header { display: flex; gap: 16px; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; }
+  h1 { font-size: 26px; line-height: 1.2; margin: 0 0 4px; }
+  .sub { margin: 0; color: var(--text-secondary); max-width: 62ch; }
+  button, select { font: inherit; color: var(--text-primary); }
+  .btn { background: var(--surface-1); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; }
+  .btn:hover { border-color: var(--text-muted); }
+  .btn[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .btn:focus-visible, select:focus-visible, .chip:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .filters { margin: 20px 0 12px; display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center;
+             background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+  .filters .grp { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .filters label.lbl { color: var(--text-secondary); font-size: 13px; }
+  select { background: var(--surface-1); border: 1px solid var(--border); border-radius: 8px; padding: 5px 8px; }
+  .chip { display: inline-flex; align-items: center; gap: 8px; background: var(--chip-bg); border: 1px solid var(--border);
+          border-radius: 999px; padding: 4px 12px 4px 10px; cursor: pointer; user-select: none; font-size: 14px; }
+  .chip input { position: absolute; opacity: 0; pointer-events: none; }
+  .chip .key { width: 16px; height: 3px; border-radius: 2px; background: var(--c); }
+  .chip small { color: var(--text-muted); }
+  .chip:has(input:not(:checked)) { opacity: .5; }
+  .chip:has(input:not(:checked)) .key { background: var(--text-muted); }
+
+  .note { background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: 12px;
+          padding: 10px 14px; font-size: 14px; color: var(--text-secondary); margin-bottom: 16px; }
+  .note b { color: var(--text-primary); }
+
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .kpi { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+  .kpi .v { font-size: 30px; font-weight: 650; letter-spacing: -.5px; line-height: 1.15; font-variant-numeric: tabular-nums; }
+  .kpi .v span { font-size: 15px; font-weight: 500; color: var(--text-secondary); margin-left: 4px; }
+  .kpi .t { color: var(--text-secondary); font-size: 13px; }
+  .kpi .d { color: var(--text-muted); font-size: 12.5px; margin-top: 2px; }
+
+  .grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+  @media (min-width: 900px) { .grid { grid-template-columns: 1fr 1fr; } .span2 { grid-column: span 2; } }
+  .card { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 16px; min-width: 0; }
+  .card h2 { font-size: 16px; margin: 0; }
+  .card .desc { margin: 2px 0 10px; color: var(--text-secondary); font-size: 13.5px; }
+  .card .head { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+  .plot { position: relative; }
+  .plot svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y; }
+  .plot svg text { fill: var(--text-muted); font-size: 11.5px; font-family: inherit; }
+  .tip { position: absolute; pointer-events: none; z-index: 5; min-width: 170px; max-width: 260px; background: var(--surface-1);
+         border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; font-size: 13px;
+         box-shadow: 0 6px 20px rgba(0,0,0,.14); opacity: 0; transition: opacity .08s; }
+  .tip .h { color: var(--text-secondary); font-size: 12.5px; margin-bottom: 4px; }
+  .tip .r { display: flex; align-items: center; gap: 8px; }
+  .tip .r i { width: 12px; height: 3px; border-radius: 2px; flex: none; }
+  .tip .r b { font-variant-numeric: tabular-nums; }
+  .tip .r span { color: var(--text-secondary); }
+  .empty { color: var(--text-muted); padding: 40px 8px; text-align: center; }
+  #mapa { height: 340px; border-radius: 8px; border: 1px solid var(--border); background: var(--chip-bg); }
+  :root[data-theme="dark"] .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.92) contrast(.9); }
+  @media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.92) contrast(.9); } }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  th { color: var(--text-secondary); font-weight: 600; position: sticky; top: 0; background: var(--surface-1); }
+  td.n, th.n { text-align: right; }
+  .scroll { max-height: 320px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; }
+  footer { margin-top: 24px; color: var(--text-muted); font-size: 13px; }
+  footer a { color: var(--accent); }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .dim { opacity: .55; transition: opacity .15s; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>¿Cómo llueve en Mérida y cómo ha cambiado?</h1>
+      <p class="sub">Mérida, Ciudad Esponja · Subtema 1: Precipitación y eventos de lluvia. Datos diarios del SMN/CONAGUA de 5 estaciones urbanas, procesados por el equipo.</p>
+    </div>
+    <button class="btn" id="tema" aria-label="Cambiar tema claro u oscuro">Tema</button>
+  </header>
+
+  <section class="filters" aria-label="Filtros">
+    <div class="grp" id="chips" role="group" aria-label="Estaciones"></div>
+    <div class="grp">
+      <label class="lbl" for="desde">Desde</label><select id="desde"></select>
+      <label class="lbl" for="hasta">Hasta</label><select id="hasta"></select>
+    </div>
+    <div class="grp" id="presets" role="group" aria-label="Rangos rápidos"></div>
+  </section>
+
+  <div class="note" role="note">
+    <b>Calidad de datos.</b> Varias estaciones traían 0.0 mm durante meses enteros de la temporada de lluvias (por ejemplo, FIUADY en junio de 2020, con ~580 mm en las demás estaciones). Son faltantes codificados como cero y se dejaron <b>sin dato</b>; aparecen como huecos en las gráficas. Los sectores son aproximados por coordenadas y no hay estación en el Centro.
+  </div>
+
+  <section class="kpis" id="kpis" aria-label="Indicadores del periodo seleccionado"></section>
+
+  <div class="grid">
+    <article class="card span2">
+      <div class="head">
+        <div><h2>Lluvia total por año</h2><p class="desc">Años con 12 meses válidos. Pasa el cursor para comparar estaciones en un mismo año.</p></div>
+        <button class="btn" id="verTabla" aria-pressed="false">Ver tabla</button>
+      </div>
+      <div class="plot" id="c-anual"></div>
+      <div class="scroll" id="t-anual" hidden></div>
+    </article>
+
+    <article class="card">
+      <h2>¿Cuándo llueve? Ciclo anual</h2>
+      <p class="desc">Promedio mensual en el periodo seleccionado.</p>
+      <div class="plot" id="c-ciclo"></div>
+    </article>
+
+    <article class="card">
+      <h2>Lluvia máxima en 24 h por año</h2>
+      <p class="desc">El día más lluvioso de cada año, por estación (años con 12 meses válidos).</p>
+      <div class="plot" id="c-max"></div>
+    </article>
+
+    <article class="card">
+      <h2>¿Qué tan raro es? Periodos de retorno</h2>
+      <p class="desc">Lluvia en 24 h esperada una vez cada <i>T</i> años (ajuste Gumbel). Solo hay ajuste para dos estaciones.</p>
+      <div class="plot" id="c-ret"></div>
+    </article>
+
+    <article class="card">
+      <h2>Estaciones</h2>
+      <p class="desc">Círculo proporcional a la lluvia anual media 1991–2020.</p>
+      <div id="mapa" role="img" aria-label="Mapa de estaciones meteorológicas de Mérida"></div>
+    </article>
+
+    <article class="card span2">
+      <h2>Eventos extraordinarios (≥100 mm en 24 h)</h2>
+      <p class="desc" id="ev-desc"></p>
+      <div class="scroll"><table id="t-ev"><thead><tr><th>Fecha</th><th>Estación</th><th class="n">Lluvia (mm)</th><th>Evento asociado</th></tr></thead><tbody></tbody></table></div>
+    </article>
+  </div>
+
+  <footer>
+    Fuente: SMN/CONAGUA (CLICOM), procesado en <code>scripts/procesar_datos.py</code>. Datos en
+    <a href="https://github.com/joseeangel0/merida-ciudad-esponja/tree/main/subtema_1_precipitacion/datos/07_Datos_propios">datos/07_Datos_propios</a>.
+    Actualizado el <span id="gen"></span>.
+  </footer>
+</div>
+
+<script src="data.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script>
+"use strict";
+const D = window.DATOS;
+const fmt = (v, d = 0) => v == null ? "—" : v.toLocaleString("es-MX", { minimumFractionDigits: d, maximumFractionDigits: d });
+const MESES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+const EST = D.estaciones;                       // orden fijo => color fijo por entidad
+EST.forEach((e, i) => { e.color = `var(--s${i + 1})`; });
+const byClave = Object.fromEntries(EST.map(e => [e.clave, e]));
+const state = { sel: new Set(EST.map(e => e.clave)), desde: 1951, hasta: 2026 };
+
+const $ = id => document.getElementById(id);
+function el(tag, attrs = {}, text) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+  if (text != null) n.textContent = text;
+  return n;
+}
+const NS = "http://www.w3.org/2000/svg";
+function sv(tag, attrs = {}) {
+  const n = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+  return n;
+}
+
+// ------------------------------------------------------------------ filtros
+const years = []; for (let y = 1951; y <= 2026; y++) years.push(y);
+for (const id of ["desde", "hasta"]) {
+  const s = $(id);
+  years.forEach(y => s.append(el("option", { value: y }, y)));
+  s.addEventListener("change", () => {
+    state.desde = +$("desde").value; state.hasta = +$("hasta").value;
+    if (state.desde > state.hasta) { if (id === "desde") state.hasta = state.desde; else state.desde = state.hasta; }
+    sync(); render();
+  });
+}
+function sync() { $("desde").value = state.desde; $("hasta").value = state.hasta; }
+
+EST.forEach(e => {
+  const lab = el("label", { class: "chip" });
+  lab.style.setProperty("--c", e.color);
+  const inp = el("input", { type: "checkbox" }); inp.checked = true;
+  inp.addEventListener("change", () => { inp.checked ? state.sel.add(e.clave) : state.sel.delete(e.clave); render(); });
+  lab.append(inp, el("span", { class: "key" }), el("span", {}, e.nombre), el("small", {}, e.sector));
+  $("chips").append(lab);
+});
+const PRESETS = [["Todo", 1951, 2026], ["1991–2020", 1991, 2020], ["Últimos 30 años", 1996, 2025], ["Últimos 10 años", 2016, 2025]];
+PRESETS.forEach(([t, a, b]) => {
+  const bt = el("button", { class: "btn", type: "button" }, t);
+  bt.addEventListener("click", () => { state.desde = a; state.hasta = b; sync(); render(); });
+  $("presets").append(bt);
+});
+
+// ------------------------------------------------------------------ gráfica de líneas SVG
+function niceMax(v) {
+  if (!(v > 0)) return 1;
+  const p = Math.pow(10, Math.floor(Math.log10(v))), f = v / p;
+  return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p;
+}
+/** cfg: {labels:[], series:[{key,name,color,values:[n|null]}], dots, yUnit, head(i)->string, labelEvery} */
+function lineChart(host, cfg) {
+  host.replaceChildren();
+  const tip = el("div", { class: "tip", role: "status" });
+  const vals = cfg.series.flatMap(s => s.values).filter(v => v != null);
+  if (!vals.length || !cfg.labels.length) { host.append(el("div", { class: "empty" }, "Sin datos para esta selección.")); return; }
+  const W = Math.max(280, host.clientWidth || 600), H = cfg.height || 300;
+  const m = { l: 46, r: 26, t: 10, b: 28 }, iw = W - m.l - m.r, ih = H - m.t - m.b;
+  const n = cfg.labels.length, ymax = niceMax(Math.max(...vals) * 1.04);
+  const X = i => m.l + (n === 1 ? iw / 2 : i * iw / (n - 1)), Y = v => m.t + ih - v / ymax * ih;
+  const svg = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": cfg.aria, tabindex: 0 });
+  for (let k = 0; k <= 4; k++) {                                   // rejilla recesiva + eje Y
+    const v = ymax * k / 4, y = Y(v);
+    svg.append(sv("line", { x1: m.l, x2: W - m.r, y1: y, y2: y, stroke: "var(--grid)", "stroke-width": 1 }));
+    const t = sv("text", { x: m.l - 6, y: y + 4, "text-anchor": "end" }); t.textContent = fmt(v, ymax < 10 ? 1 : 0); svg.append(t);
+  }
+  const every = cfg.labelEvery || Math.max(1, Math.ceil(n / Math.floor(iw / 48)));
+  cfg.labels.forEach((l, i) => {
+    if (i % every && i !== n - 1) return;
+    if (i === n - 1 && i % every && n - 1 - (Math.floor((n - 1) / every) * every) < every * .6) return;
+    const t = sv("text", { x: X(i), y: H - 8, "text-anchor": "middle" }); t.textContent = l; svg.append(t);
+  });
+  cfg.series.forEach(s => {
+    let d = "", open = false;
+    s.values.forEach((v, i) => { if (v == null) { open = false; return; } d += `${open ? "L" : "M"}${X(i).toFixed(1)},${Y(v).toFixed(1)}`; open = true; });
+    svg.append(sv("path", { d, fill: "none", stroke: s.color, "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round", opacity: cfg.dots ? .55 : 1 }));
+    if (cfg.dots) s.values.forEach((v, i) => { if (v != null) svg.append(sv("circle", { cx: X(i), cy: Y(v), r: 4, fill: s.color, stroke: "var(--surface-1)", "stroke-width": 2 })); });
+  });
+  const hair = sv("line", { y1: m.t, y2: m.t + ih, stroke: "var(--text-muted)", "stroke-width": 1, "stroke-dasharray": "3 3", visibility: "hidden" });
+  const marks = cfg.series.map(s => { const c = sv("circle", { r: 5, fill: s.color, stroke: "var(--surface-1)", "stroke-width": 2, visibility: "hidden" }); return c; });
+  svg.append(hair, ...marks);
+  const hit = sv("rect", { x: m.l, y: m.t, width: iw, height: ih, fill: "transparent" });
+  svg.append(hit);
+  let cur = -1;
+  function show(i) {
+    cur = Math.max(0, Math.min(n - 1, i));
+    const x = X(cur);
+    hair.setAttribute("x1", x); hair.setAttribute("x2", x); hair.setAttribute("visibility", "visible");
+    tip.replaceChildren(el("div", { class: "h" }, cfg.head(cur)));
+    const rows = [];
+    cfg.series.forEach((s, k) => {
+      const v = s.values[cur];
+      if (v == null) { marks[k].setAttribute("visibility", "hidden"); return; }
+      marks[k].setAttribute("cx", x); marks[k].setAttribute("cy", Y(v)); marks[k].setAttribute("visibility", "visible");
+      rows.push([v, s]);
+    });
+    rows.sort((a, b) => b[0] - a[0]).forEach(([v, s]) => {
+      const r = el("div", { class: "r" }); const key = el("i"); key.style.background = s.color;
+      r.append(key, el("b", {}, fmt(v, cfg.dec || 0) + " " + cfg.yUnit), el("span", {}, s.name)); tip.append(r);
+    });
+    if (!rows.length) tip.append(el("div", { class: "r" }, "Sin dato válido"));
+    const px = x / W * host.clientWidth, tw = tip.offsetWidth || 190;
+    tip.style.left = Math.min(Math.max(px + 12, 0), host.clientWidth - tw) + "px"; tip.style.top = "8px";
+    tip.style.opacity = 1;
+  }
+  const idxAt = ev => { const r = svg.getBoundingClientRect(); const x = (ev.clientX - r.left) / r.width * W; return Math.round((x - m.l) / iw * (n - 1)); };
+  hit.addEventListener("pointermove", ev => show(idxAt(ev)));
+  hit.addEventListener("pointerdown", ev => show(idxAt(ev)));
+  svg.addEventListener("pointerleave", () => { tip.style.opacity = 0; hair.setAttribute("visibility", "hidden"); marks.forEach(c => c.setAttribute("visibility", "hidden")); });
+  svg.addEventListener("keydown", ev => {
+    if (ev.key === "ArrowRight") { show(cur < 0 ? 0 : cur + 1); ev.preventDefault(); }
+    if (ev.key === "ArrowLeft") { show(cur < 0 ? n - 1 : cur - 1); ev.preventDefault(); }
+  });
+  svg.addEventListener("blur", () => { tip.style.opacity = 0; });
+  host.append(svg, tip);
+}
+
+// ------------------------------------------------------------------ cálculo por filtro
+const selEst = () => EST.filter(e => state.sel.has(e.clave));
+const inRange = y => y >= state.desde && y <= state.hasta;
+
+function render() {
+  const est = selEst();
+  const A = D.anual.filter(r => state.sel.has(r[0]) && inRange(r[1]));
+  const yrs = []; for (let y = state.desde; y <= state.hasta; y++) yrs.push(y);
+
+  // KPIs
+  const tot = A.filter(r => r[2] != null);
+  const media = tot.length ? tot.reduce((s, r) => s + r[2], 0) / tot.length : null;
+  let mx = null; A.forEach(r => { if (r[5] != null && (!mx || r[5] > mx[5])) mx = r; });
+  const d50 = tot.length ? tot.reduce((s, r) => s + r[3], 0) / tot.length : null;
+  const ev = D.eventos.filter(r => state.sel.has(r[0]) && inRange(+r[1].slice(0, 4)));
+  const kp = $("kpis"); kp.replaceChildren();
+  const tile = (v, u, t, d) => { const k = el("div", { class: "kpi" }); const vv = el("div", { class: "v" }, v); if (u) vv.append(el("span", {}, u)); k.append(vv, el("div", { class: "t" }, t), el("div", { class: "d" }, d)); kp.append(k); };
+  tile(fmt(media), "mm", "Lluvia anual media", tot.length ? `${tot.length} años-estación con 12 meses válidos` : "Sin años completos");
+  tile(mx ? fmt(mx[5]) : "—", "mm", "Máxima registrada en 24 h", mx ? `${byClave[mx[0]].nombre}, ${mx[1]}` : "");
+  tile(fmt(d50, 1), "días", "Días con ≥50 mm por año", "Promedio por estación-año");
+  tile(fmt(ev.length), "", "Eventos ≥100 mm en 24 h", `${state.desde}–${state.hasta}, estaciones seleccionadas`);
+
+  // lluvia total por año
+  const valA = (c, y) => { const r = D.anual.find(x => x[0] === c && x[1] === y); return r ? r[2] : null; };
+  const serA = est.map(e => ({ key: e.clave, name: e.nombre, color: e.color, values: yrs.map(y => valA(e.clave, y)) }));
+  lineChart($("c-anual"), { labels: yrs, series: serA, yUnit: "mm", head: i => `Año ${yrs[i]}`, aria: "Lluvia total anual por estación" });
+  tablaAnual(yrs, serA);
+
+  // ciclo anual
+  const acc = {};
+  D.mensual.forEach(r => {
+    if (!state.sel.has(r[0]) || r[2] == null) return;
+    const y = +r[1].slice(0, 4); if (!inRange(y)) return;
+    const k = r[0] + "|" + (+r[1].slice(5) - 1); (acc[k] = acc[k] || []).push(r[2]);
+  });
+  const serC = est.map(e => ({ key: e.clave, name: e.nombre, color: e.color,
+    values: MESES.map((_, mi) => { const a = acc[e.clave + "|" + mi]; return a ? a.reduce((s, v) => s + v, 0) / a.length : null; }) }));
+  lineChart($("c-ciclo"), { labels: MESES, series: serC, yUnit: "mm", head: i => ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"][i] + " (promedio)", labelEvery: 1, aria: "Promedio mensual de lluvia por estación" });
+
+  // máxima 24 h
+  // solo años con 12 meses válidos: con meses faltantes el máximo anual sería una cota inferior engañosa
+  const valM = (c, y) => { const r = D.anual.find(x => x[0] === c && x[1] === y); return r && r[2] != null ? r[5] : null; };
+  const serM = est.map(e => ({ key: e.clave, name: e.nombre, color: e.color, values: yrs.map(y => valM(e.clave, y)) }));
+  lineChart($("c-max"), { labels: yrs, series: serM, dots: true, yUnit: "mm", head: i => `Año ${yrs[i]}`, aria: "Lluvia máxima en 24 horas por año" });
+
+  // periodos de retorno
+  const Ts = [2, 5, 10, 25, 50, 100];
+  const serR = est.filter(e => D.retorno.some(r => r[0] === e.clave)).map(e => ({ key: e.clave, name: e.nombre, color: e.color,
+    values: Ts.map(t => { const r = D.retorno.find(x => x[0] === e.clave && x[1] === t); return r ? r[2] : null; }) }));
+  const retHost = $("c-ret");
+  if (!serR.length) { retHost.replaceChildren(el("div", { class: "empty" }, "Selecciona Mérida (OBS) o Mérida (CONAGUA) para ver periodos de retorno.")); }
+  else lineChart(retHost, { labels: Ts.map(t => t + " años"), series: serR, yUnit: "mm", head: i => `Cada ${Ts[i]} años`, labelEvery: 1, aria: "Lluvia en 24 horas por periodo de retorno" });
+
+  // mapa
+  pintaMapa();
+
+  // tabla de eventos
+  $("ev-desc").textContent = `${ev.length} día(s) con ≥100 mm entre ${state.desde} y ${state.hasta}. El evento asociado se cruza con las reseñas de ciclones del SMN.`;
+  const tb = $("t-ev").querySelector("tbody"); tb.replaceChildren();
+  ev.slice().sort((a, b) => b[1].localeCompare(a[1])).forEach(r => {
+    const tr = el("tr"); const k = el("td"); const sw = el("span", {}, "● "); sw.style.color = byClave[r[0]].color; k.append(sw, byClave[r[0]].nombre);
+    tr.append(el("td", {}, r[1]), k, el("td", { class: "n" }, fmt(r[2], 1)), el("td", {}, r[3] || "—")); tb.append(tr);
+  });
+}
+
+function tablaAnual(yrs, ser) {
+  const host = $("t-anual"); host.replaceChildren();
+  const t = el("table"), h = el("tr"); h.append(el("th", {}, "Año")); ser.forEach(s => h.append(el("th", { class: "n" }, s.name + " (mm)")));
+  const th = el("thead"); th.append(h); t.append(th);
+  const b = el("tbody");
+  yrs.slice().reverse().forEach(y => {
+    const i = yrs.indexOf(y), tr = el("tr"); tr.append(el("td", {}, y));
+    ser.forEach(s => tr.append(el("td", { class: "n" }, fmt(s.values[i], 1)))); b.append(tr);
+  });
+  t.append(b); host.append(t);
+}
+$("verTabla").addEventListener("click", ev => {
+  const on = ev.currentTarget.getAttribute("aria-pressed") !== "true";
+  ev.currentTarget.setAttribute("aria-pressed", on); ev.currentTarget.textContent = on ? "Ver gráfica" : "Ver tabla";
+  $("t-anual").hidden = !on; $("c-anual").hidden = on;
+});
+
+// ------------------------------------------------------------------ mapa (Leaflet; si no hay red, se avisa)
+let map, capas = [];
+function pintaMapa() {
+  const host = $("mapa");
+  if (typeof L === "undefined") { host.replaceChildren(el("div", { class: "empty" }, "No se pudo cargar el mapa (sin conexión).")); return; }
+  if (!map) {
+    map = L.map(host, { scrollWheelZoom: false }).setView([21.0, -89.62], 11);
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 18, attribution: "© OpenStreetMap" }).addTo(map);
+  }
+  capas.forEach(c => c.remove()); capas = [];
+  const css = getComputedStyle(document.documentElement);
+  EST.forEach(e => {
+    const on = state.sel.has(e.clave), col = css.getPropertyValue(e.color.slice(4, -1)).trim();
+    const r = 9 + Math.max(0, ((e.prom_1991_2020 || 1000) - 950)) / 18;
+    const c = L.circleMarker([e.lat, e.lon], { radius: r, color: css.getPropertyValue("--surface-1").trim(), weight: 2, fillColor: col, fillOpacity: on ? .9 : .25, opacity: on ? 1 : .4 }).addTo(map);
+    c.bindTooltip(`${e.nombre} · ${e.sector}<br>${fmt(e.prom_1991_2020)} mm/año (1991–2020)<br>Datos ${e.inicio}–${e.fin}`);
+    capas.push(c);
+  });
+}
+
+// ------------------------------------------------------------------ tema y arranque
+$("tema").addEventListener("click", () => {
+  const dark = document.documentElement.dataset.theme === "dark" || (!document.documentElement.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+  document.documentElement.dataset.theme = dark ? "light" : "dark";
+  try { localStorage.setItem("tema-lluvia", document.documentElement.dataset.theme); } catch (e) {}
+  setTimeout(render, 0);
+});
+try { const t = localStorage.getItem("tema-lluvia"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+$("gen").textContent = D.generado;
+let rz; new ResizeObserver(() => { clearTimeout(rz); rz = setTimeout(render, 120); }).observe(document.querySelector(".wrap"));
+sync(); render();
+</script>
+</body>
+</html>
