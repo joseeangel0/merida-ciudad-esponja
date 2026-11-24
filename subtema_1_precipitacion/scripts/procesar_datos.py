@@ -52,6 +52,42 @@ def leer_smn(path):
     return meta, df.dropna(subset=["fecha"])
 
 
+def limpiar_ceros_espurios(df):
+    """Convierte a NaN los días de meses cuyo 0.0 mm casi seguro es un faltante codificado.
+
+    Un mes completo (>= UMBRAL_DIAS_MES de días con dato) con total 0.0 mm se considera
+    sospechoso si:
+      - cae en la temporada lluviosa (jun-oct; en Mérida nunca llueve 0 mm todo el mes), o
+      - forma parte de una racha de >= 3 meses consecutivos en cero en la misma estación.
+    Devuelve (df limpio, lista de meses 'YYYY-MM' invalidados).
+    """
+    d = df.set_index("fecha")["precip_mm"]
+    tot = d.resample("MS").sum(min_count=1)
+    n = d.resample("MS").count()
+    completo = n >= UMBRAL_DIAS_MES * tot.index.days_in_month
+    cero = completo & (tot == 0)
+    sosp = cero & tot.index.month.isin(range(6, 11))
+
+    idx = tot.index.year * 12 + tot.index.month
+    corr, ini = 0, None
+    for i, (flag, k) in enumerate(zip(cero.to_numpy(), idx)):
+        if flag and corr and k == ult + 1:
+            corr += 1
+        elif flag:
+            corr, ini = 1, i
+        else:
+            corr = 0
+        ult = k
+        if corr >= 3:
+            sosp.iloc[ini:i + 1] = True
+    meses = [t.strftime("%Y-%m") for t in tot.index[sosp.to_numpy()]]
+    if meses:
+        mask = df["fecha"].dt.strftime("%Y-%m").isin(meses)
+        df = df.copy()
+        df.loc[mask, "precip_mm"] = np.nan
+    return df, meses
+
+
 def agregar(df):
     """Diario -> mensual y anual con control de completitud."""
     d = df.set_index("fecha")["precip_mm"]
@@ -81,6 +117,9 @@ catalogo, diarios, mensuales, anuales = [], [], [], []
 for f in sorted(SMN_DIR.glob("dia*.txt")):
     meta, df = leer_smn(f)
     clave = meta.get("ESTACIÓN") or f.stem[3:]
+    df, invalidados = limpiar_ceros_espurios(df)
+    if invalidados:
+        print(f"  {clave}: {len(invalidados)} meses con 0.0 mm sospechoso -> sin dato")
     validos = df.dropna(subset=["precip_mm"])
     catalogo.append({
         "clave": clave, "nombre": meta.get("NOMBRE"), "municipio": meta.get("MUNICIPIO"),

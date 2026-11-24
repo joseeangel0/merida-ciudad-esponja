@@ -4,3 +4,5 @@ matplotlib
 openpyxl
 pyshp
 pyproj
+h5py
+harmony-py

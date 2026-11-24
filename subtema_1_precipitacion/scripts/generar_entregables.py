@@ -392,7 +392,7 @@ documento = rf"""\documentclass[11pt,a4paper]{{article}}
 \begin{{itemize}}[leftmargin=1.2em,itemsep=2pt]
 \item \textbf{{27 fuentes}} en las 9 categorías del proyecto, 3 por categoría. De ellas, {con_datos} ya tienen datos en la carpeta
   (descargados, generados por nosotros o con script y muestra de scraping), {estado_n['Parcial'] + estado_n['Documentado']} solo se pueden consultar en línea
-  y {estado_n['Pendiente']} están pendientes (3 solicitudes de información y 1 que requiere cuenta de NASA).
+  y {estado_n['Pendiente']} están pendientes (las 3 solicitudes de información, enviadas el 1 de octubre).
 \item \textbf{{Cuánto llueve:}} unos \textbf{{{clim_tot:,.0f} mm al año}} en el centro de Mérida (estación 31044, promedio 1991–2020).
 \item \textbf{{Cuándo llueve:}} el \textbf{{{pct_lluvias:.0f}\%}} cae de mayo a octubre, con picos en junio ({clim.promedio_mm[5]:.0f} mm)
   y septiembre ({clim.promedio_mm[8]:.0f} mm). Julio baja a {clim.promedio_mm[6]:.0f} mm (canícula).
@@ -425,7 +425,7 @@ fuente secundaria o con resolución gruesa para una ciudad.
 \item \textbf{{SIEGY}} ahora redirige a \texttt{{datos.yucatan.gob.mx}} y ya no publica capas ni anuarios. No tiene datos directos de lluvia;
   las 3 fuentes elegidas son de contexto.
 \item \textbf{{LiDAR:}} el modelo de INEGI para Mérida se llama ``LiDAR'' en su portal, pero sus metadatos dicen que se hizo con
-  imágenes de satélite (es fotogramétrico). El único LiDAR real sobre la ciudad son los satélites de la NASA (C8.3).
+  imágenes de satélite (es fotogramétrico). El único LiDAR real sobre la ciudad son los satélites de la NASA (C8.3: GEDI e ICESat-2, ya descargados).
 \item \textbf{{Datos del SMN:}} los registros diarios de estaciones (CLICOM) no están en datos.gob.mx. Los usamos como insumo de los
   \emph{{datos propios}} (C7) y están en \nolinkurl{{07_Datos_propios/insumo_SMN_CONAGUA_estaciones/}}.
 \end{{itemize}}
@@ -510,15 +510,14 @@ Los círculos son las estaciones del SMN con al menos 10 años completos; el nú
 \item \textbf{{Estación ≠ ciudad:}} un pluviómetro mide un punto. En una tormenta, dos colonias pueden recibir cantidades muy distintas.
 \item \textbf{{Intensidad:}} los datos diarios no muestran aguaceros cortos (por ejemplo, 60 mm en una hora), que son los que más inundan.
   Para eso sirven C5.1 (solicitud al SMN) y C6.1 (scraping periódico de las estaciones automáticas).
-\item \textbf{{Periodos de retorno:}} son estimaciones con 44–55 años de datos; la incertidumbre crece mucho para 50 y 100 años.
+\item \textbf{{Periodos de retorno:}} son estimaciones con 36–52 años de datos; la incertidumbre crece mucho para 50 y 100 años.
 \item \textbf{{Elevación:}} Mérida es muy plana (0–13 m en el centro); usar el modelo de INEGI con cuidado y validarlo con C8.3.
 \end{{itemize}}
 
 \section{{Pendientes}}
 \begin{{enumerate}}[leftmargin=1.4em,itemsep=2pt]
-\item Enviar las 3 solicitudes de información (C5.1–C5.3); el texto listo para copiar está en \nolinkurl{{05_Solicitudes_gobierno/solicitudes_sugeridas.md}}.
+\item Dar seguimiento a las 3 solicitudes de información (C5.1–C5.3), enviadas el 1 de octubre; vencen el 30 de octubre (con prórroga, el 17 de noviembre).
 \item Programar el scraping del SMN (C6.1) para que corra cada semana y vaya acumulando la serie de intensidad.
-\item Opcional: crear una cuenta en NASA Earthdata para descargar GEDI/ICESat-2 (C8.3).
 \item Conectar \texttt{{07\_Datos\_propios/}} con el prototipo HTML.
 \end{{enumerate}}
 
