@@ -354,6 +354,14 @@ def reporte():
         coincide = "sí" if (np.isnan(a1) and np.isnan(despues)) or abs(a1 - despues) < 0.15 else f"NO ({despues})"
         filas.append(dict(clave=clave, nombre=cat.loc[clave, "nombre"], meses=int((inv.estacion == clave).sum()),
                           dias=int(crudo.notna().sum() - limpio.notna().sum()), a0=a0, n0=n0, a1=a1, n1=n1, ok=coincide))
+    urb = diar[diar.estacion.isin(["31036", "31044", "31078", "31095", "31097"])].dropna(subset=["precip_mm"])
+    aislados = 0
+    for _, g in urb.groupby("fecha"):
+        v = g.set_index("estacion")["precip_mm"]
+        for e, x in v.items():
+            otros = v.drop(e)
+            if len(otros) >= 3 and x == 0.0 and otros.median() >= 40:
+                aislados += 1
     T = pd.DataFrame(filas)
     por_motivo = inv.groupby(["estacion", "motivo"]).size().reset_index(name="n")
 
@@ -383,6 +391,7 @@ def reporte():
           "## Limitaciones",
           "- La regla es una **heurística**: un mes realmente seco (0 mm) en la costa, por ejemplo en Progreso, podría descartarse sin ser un faltante. Por eso la lista completa está en `meses_invalidados.csv` para auditarla.",
           "- Progreso (31023) y Conkal (31057) tienen meses descartados, pero no se usan en el dashboard (solo las 5 estaciones urbanas).",
+          f"- La regla solo detecta **meses** en cero. Un cero aislado no se distingue de un día sin lluvia: en {aislados} días una estación marcó 0.0 mm mientras la mediana de las demás estaciones superaba 40 mm (puede ser lluvia muy local, hora de lectura del pluviómetro o un faltante). Es un porcentaje mínimo de los días, pero conviene no tomar la lluvia de un solo día en una sola estación como exacta.",
           "- Los años recientes (2026) están incompletos: no hay total anual, pero sí índices de los días disponibles.",
           "- Los sectores del dashboard (Norte, Poniente, Oriente) son aproximados por coordenadas; **el Centro no tiene estación**.",
           "- El cruce estación–AGEB (`estaciones_claves_territoriales.csv`) depende del datum de las coordenadas del SMN; una estación cerca del borde de una AGEB podría caer en la vecina.",

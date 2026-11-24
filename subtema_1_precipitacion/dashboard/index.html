@@ -170,7 +170,7 @@
 
     <article class="card span2">
       <h2>Lluvia y reportes de desagüe de calles inundadas</h2>
-      <p class="desc">Arriba, la lluvia mensual; abajo, los reportes de desagüe que recibió el Ayuntamiento. Cuando llueve más, se reporta más: octubre de 2020 (Gamma y Delta) y junio de 2026 son los picos.</p>
+      <p class="desc">Arriba, la lluvia mensual; abajo, los reportes de desagüe que recibió el Ayuntamiento. Cuando llueve más, se reporta más: los picos coinciden con junio y octubre de 2020 (Cristóbal; Gamma y Delta) y con mayo–junio de 2026.</p>
       <div class="legend" id="lg-rep"></div>
       <div class="plot" id="c-rain-m"></div>
       <div class="plot" id="c-rep-m"></div>
@@ -184,6 +184,7 @@
         <div><h3>Lluvia diaria (mm)</h3><div class="plot" id="c-ev-lluvia"></div></div>
         <div><h3>Reportes por día</h3><div class="legend" id="lg-ev"></div><div class="plot" id="c-ev-rep"></div></div>
       </div>
+      <p class="foot" id="nota-ev"></p>
     </article>
 
     <article class="card span2">
@@ -447,9 +448,9 @@ function renderPNT() {
   } else {
     leyenda($("lg-rep"), [["var(--text-secondary)", "Lluvia mensual (promedio de las estaciones elegidas)"], ...series.map(s => [s.color, s.name])]);
     lineChart(hostL, { labels: meses.map(dm), series: [{ key: "ll", name: "Lluvia (promedio)", color: "var(--text-secondary)", values: lluvia }], yUnit: "mm", height: 190,
-      head: i => meses[i], aria: "Lluvia mensual promedio de las estaciones", labelEvery: Math.max(1, Math.ceil(meses.length / 12)) });
+      head: i => meses[i], aria: "Lluvia mensual promedio de las estaciones" });
     lineChart(hostR, { labels: meses.map(dm), series, yUnit: "reportes", height: 190, head: i => meses[i] + (meses[i].startsWith("2023") ? " · sin datos del Ayuntamiento" : ""),
-      aria: "Reportes mensuales de desagüe de calles inundadas", labelEvery: Math.max(1, Math.ceil(meses.length / 12)) });
+      aria: "Reportes mensuales de desagüe de calles inundadas" });
     $("nota-rep").textContent = "Fuente: Ayuntamiento de Mérida (PNT). No hay datos de 2023 y las dos series vienen de entregas distintas. Un mes sin reportes aparece en 0; un mes sin datos de lluvia, vacío.";
   }
 
@@ -458,12 +459,15 @@ function renderPNT() {
   const serL = est.map(e => ({ key: e.clave, name: e.nombre, color: e.color,
     values: E.dias.map(d => { const r = E.lluvia.find(x => x[0] === e.clave && x[1] === d); return r ? r[2] : null; }) }));
   lineChart($("c-ev-lluvia"), { labels: E.dias.map(diaCorto), series: serL, yUnit: "mm", height: 240, dots: true, head: i => diaCorto(E.dias[i]) + " de 2026",
-    aria: "Lluvia diaria por estación durante el temporal", labelEvery: 3 });
+    aria: "Lluvia diaria por estación durante el temporal" });
   const serE = [{ key: "des", name: "Desagüe de calles inundadas", color: "var(--accent)", values: E.desague },
                 { key: "tot", name: "Todas las solicitudes de drenaje", color: "var(--text-secondary)", values: E.total }];
   leyenda($("lg-ev"), serE.map(s => [s.color, s.name]));
   lineChart($("c-ev-rep"), { labels: E.dias.map(diaCorto), series: serE, yUnit: "reportes", height: 240, dots: true, head: i => diaCorto(E.dias[i]) + " de 2026",
-    aria: "Reportes diarios de drenaje durante el temporal", labelEvery: 3 });
+    aria: "Reportes diarios de drenaje durante el temporal" });
+
+  const acum = est.map(e => { const v = E.lluvia.filter(r => r[0] === e.clave && r[1] >= "2026-05-29" && r[1] <= "2026-06-02" && r[2] != null).reduce((s, r) => s + r[2], 0); return `${e.nombre}: ${fmt(v)} mm`; });
+  $("nota-ev").textContent = acum.length ? `Lluvia acumulada del 29 de mayo al 2 de junio · ${acum.join(" · ")}. Compara los acumulados: el reparto por día puede variar entre estaciones (lluvia muy local u hora de lectura del pluviómetro); por ejemplo, el 30 de mayo Mérida (OBS) marca 153.6 mm y otras cuatro estaciones casi 0, pero los acumulados son parecidos.` : "";
 
   // ---- PROCIVY
   const tb = $("t-pv").querySelector("tbody"); tb.replaceChildren();

@@ -67,6 +67,7 @@ Además, la lluvia de 24 h con periodo de retorno de 100 años pasó de 209 a 21
 ## Limitaciones
 - La regla es una **heurística**: un mes realmente seco (0 mm) en la costa, por ejemplo en Progreso, podría descartarse sin ser un faltante. Por eso la lista completa está en `meses_invalidados.csv` para auditarla.
 - Progreso (31023) y Conkal (31057) tienen meses descartados, pero no se usan en el dashboard (solo las 5 estaciones urbanas).
+- La regla solo detecta **meses** en cero. Un cero aislado no se distingue de un día sin lluvia: en 7 días una estación marcó 0.0 mm mientras la mediana de las demás estaciones superaba 40 mm (puede ser lluvia muy local, hora de lectura del pluviómetro o un faltante). Es un porcentaje mínimo de los días, pero conviene no tomar la lluvia de un solo día en una sola estación como exacta.
 - Los años recientes (2026) están incompletos: no hay total anual, pero sí índices de los días disponibles.
 - Los sectores del dashboard (Norte, Poniente, Oriente) son aproximados por coordenadas; **el Centro no tiene estación**.
 - El cruce estación–AGEB (`estaciones_claves_territoriales.csv`) depende del datum de las coordenadas del SMN; una estación cerca del borde de una AGEB podría caer en la vecina.
