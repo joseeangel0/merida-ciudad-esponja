@@ -4,6 +4,10 @@ Proyecto colaborativo de visualización sobre la lluvia y el agua en Mérida, Yu
 
 > **Pregunta guía:** ¿Cómo se distribuye la lluvia en Mérida y cómo ha cambiado con el tiempo?
 
+## Equipo
+
+**Equipo 1** · Diego Loria · Rama Marin · José Ángel Pech
+
 ## Qué hay aquí
 
 | Qué | Dónde |
