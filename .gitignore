@@ -53,6 +53,10 @@ subtema_1_precipitacion/datos/04_GeoPortal_Merida/*.pdf
 subtema_1_precipitacion/datos/08_LiDAR/*
 !subtema_1_precipitacion/datos/08_LiDAR/README.md
 !subtema_1_precipitacion/datos/08_LiDAR/indice_cartas_merida.csv
+# C8.3: NASA GEDI / ICESat-2 — solo los CSV limpios; los HDF5 recortados se quedan fuera
+!subtema_1_precipitacion/datos/08_LiDAR/NASA_GEDI_ICESat2/
+subtema_1_precipitacion/datos/08_LiDAR/NASA_GEDI_ICESat2/*
+!subtema_1_precipitacion/datos/08_LiDAR/NASA_GEDI_ICESat2/*.csv
 
 # Fuentes excluidas fuera de las 9 categorías (NOAA, ERA5, CHIRPS, IBTrACS, etc.)
 subtema_1_precipitacion/datos/_excluidas_fuera_de_categorias/

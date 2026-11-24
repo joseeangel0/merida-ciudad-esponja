@@ -61,3 +61,20 @@ Licencia: Términos de Libre Uso de la Información del INEGI (https://www.inegi
 - MDT 1.5 m en F16C52A1: cotas de 0.01 a 12.88 m. El relieve es muy plano, así que unos decímetros de error
   vertical cambian dónde aparecen las depresiones. Por eso hay que validar con los puntos de inundación conocidos.
 - Los ZIP usan `\` como separador de rutas. En macOS/Linux, `unzip` avisa pero extrae bien.
+
+## NASA_GEDI_ICESat2/ — LiDAR satelital real (fuente C8.3, descargado 2026-10-05)
+
+Generado con `scripts/descargar_nasa_lidar.py` (cuenta NASA Earthdata). Harmony recorta los granulos al bbox
+en el servidor; los HDF5 recortados (~2 GB) quedan en `hdf5_gedi/` y `hdf5_atl08/` y **no van a git**.
+
+| Archivo | Contenido |
+|---|---|
+| `gedi_l2a_merida.csv` | 34,009 huellas GEDI L2A v002 (abr-2019 a may-2025, 26 órbitas). Filtros: `quality_flag = 1`, `degrade_flag = 0`, `sensitivity ≥ 0.9`. Terreno + alturas de dosel rh50/rh98/rh100. |
+| `atl08_merida.csv` | 47,855 segmentos ICESat-2 ATL08 v007 de 100 m (nov-2018 a jun-2026, 62 pasadas) con terreno válido y dosel. |
+
+- Las alturas de la NASA son **elipsoidales (WGS84)**. La columna `elev_terreno_egm08_m` las pasa al geoide EGM2008
+  (el geoide está ~13.4 m bajo el elipsoide en Mérida); esa es la que se compara con INEGI.
+- Control de calidad: GEDI y ATL08 coinciden entre sí en 6,062 pares a <30 m (sesgo 0.3 m, MAD 0.7 m) y reproducen el
+  descenso del terreno hacia el norte. El CEM 15 m queda ~1.5–2 m por encima de ambos.
+- Hay <0.1% de valores atípicos (terreno < 0 m o > 30 m, dosel > 30 m) por nubes o edificios altos; filtrarlos antes de graficar.
+
