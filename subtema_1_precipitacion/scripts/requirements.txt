@@ -1,8 +1,10 @@
-pandas
-numpy
-matplotlib
-openpyxl
-pyshp
-pyproj
 h5py
 harmony-py
+matplotlib
+numpy
+openpyxl
+pandas
+pypdf
+pyproj
+pyshp
+xlrd
