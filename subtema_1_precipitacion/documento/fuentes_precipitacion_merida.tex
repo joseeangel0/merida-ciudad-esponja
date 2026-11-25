@@ -37,7 +37,7 @@
 
 \begin{itemize}[leftmargin=1.2em,itemsep=2pt]
 \item \textbf{27 fuentes} en las 9 categorías del proyecto, 3 por categoría. De ellas, 25 ya tienen datos en la carpeta
-  (descargados, generados por nosotros o con script y muestra de scraping) y 2 solo se pueden consultar en línea.
+  (descargados, generados por nosotros o capturados por scraping) y 2 solo se pueden consultar en línea.
   De C5.1 (CONAGUA) solo hay tres meses de 2022 con lluvia cada 10 minutos; la lluvia horaria completa estaba en un CD de \$13 MXN que el equipo decidió no recoger.
 \item \textbf{Cuánto llueve:} unos \textbf{1,065 mm al año} en el centro de Mérida (estación 31044, promedio 1991–2020).
 \item \textbf{Cuándo llueve:} el \textbf{82\%} cae de mayo a octubre, con picos en junio (184 mm)
@@ -301,39 +301,39 @@ Enlace & \url{https://www.plataformadetransparencia.org.mx/} \\
 \begin{ficha}{C6.1 · SMN – visor SIVEA de estaciones automáticas (endpoints JSON/CSV)}
 \begin{tabularx}{\linewidth}{@{}>{\leavevmode\color{tinta2}\bfseries\raggedright\arraybackslash}p{2.9cm}X@{}}
 Institución & CONAGUA – SMN \\
-Qué contiene & Lluvia acumulada 24 h (207 estaciones) y series cada 10 min (24 h, 1 semana, 90 días) \\
-Periodo · resolución & Últimos 90 días (móvil) · 10 min, puntual \\
-Formato · acceso & JSON / CSV · Libre (sin robots.txt) \\
-Confiabilidad & Alta \\
-Limitaciones & Solo 90 días hacia atrás: hay que correrlo periódicamente para armar una serie. No hay estación «Mérida» (la más cercana es Progreso). \\
-Uso propuesto & Construir nuestra propia serie de intensidad a partir de ahora. \\
-Estado & Script y muestra · {\small\nolinkurl{ejemplo_scraping_smn_sivea.py, muestra_smn_sivea_*.csv}} \\
+Qué contiene & Lluvia, temperatura y humedad cada 10 min de las 5 estaciones automáticas de Yucatán que lista el visor (47,698 registros); la serie se acumula en cada captura \\
+Periodo · resolución & 27-ago a 24-nov-2026 (ventana móvil de 90 días) · 10 min, puntual \\
+Formato · acceso & JSON / CSV $\rightarrow$ CSV acumulado · Libre (el visor público no publica robots.txt) \\
+Confiabilidad & Media (el canal de lluvia falla) \\
+Limitaciones & Solo guarda 90 días: hay que capturarlo al menos cada \textasciitilde{}60 días. «MERIDA» aparece en el visor pero casi no transmite (2 registros en 90 días); la estación con serie continua más cercana es Progreso (\textasciitilde{}30 km). La lluvia de Progreso no coincide con la serie diaria del SMN (el 7-sep-2026 marca 0.0 mm contra 24.7 mm): probables ceros que en realidad son faltantes. \\
+Uso propuesto & Acumular una serie propia de lluvia cada 10 minutos de Yucatán; contexto regional de los eventos. No sirve para medir la intensidad en Mérida. \\
+Estado & Descargado: captura del 24-nov-2026 con script; hay que repetirla · {\small\nolinkurl{smn_sivea_*.csv; scripts/scraping_smn_sivea.py}} \\
 Enlace & \url{https://smn.conagua.gob.mx/tools/GUI/sivea_v3/sivea.php} \\
 \end{tabularx}
 \end{ficha}
 \begin{ficha}{C6.2 · PROCIVY – boletines de ciclones tropicales}
 \begin{tabularx}{\linewidth}{@{}>{\leavevmode\color{tinta2}\bfseries\raggedright\arraybackslash}p{2.9cm}X@{}}
 Institución & Gobierno de Yucatán – Protección Civil \\
-Qué contiene & Boletines por sistema: fecha, hora, alerta, distancia a Mérida, texto \\
-Periodo · resolución & Por temporada (p. ej. 2020: 30 sistemas) · Por evento \\
-Formato · acceso & HTML · Libre (robots.txt lo permite) \\
+Qué contiene & Boletines de ciclones tropicales: fecha, hora, texto y distancia a Mérida cuando la dan (413 boletines de 108 sistemas; 124 sistemas listados) \\
+Periodo · resolución & Temporadas 2019–2026 · Por evento \\
+Formato · acceso & HTML $\rightarrow$ CSV · Libre (robots.txt lo permite) \\
 Confiabilidad & Alta \\
-Limitaciones & Solo ciclones; no trae mm de lluvia. \\
-Uso propuesto & Fechar con precisión los eventos extraordinarios y su cercanía a Mérida. \\
-Estado & Script y muestra · {\small\nolinkurl{ejemplo_scraping_procivy.py, muestra_procivy_boletines_2020.csv}} \\
+Limitaciones & Solo ciclones; no trae mm de lluvia. 16 sistemas dicen «No hay boletines» (no amenazaron a Yucatán) y pocos boletines dan la distancia a Mérida. \\
+Uso propuesto & Fechar con precisión los ciclones que afectaron a Mérida y cruzarlos con la lluvia y los reportes de drenaje. \\
+Estado & Descargado: temporadas 2019–2026 con script · {\small\nolinkurl{procivy_*.csv; scripts/scraping_procivy.py}} \\
 Enlace & \url{https://www.yucatan.gob.mx/procivy/boletines.php?t=2020} \\
 \end{tabularx}
 \end{ficha}
 \begin{ficha}{C6.3 · Diario de Yucatán – notas de lluvia/inundación (sitemaps XML)}
 \begin{tabularx}{\linewidth}{@{}>{\leavevmode\color{tinta2}\bfseries\raggedright\arraybackslash}p{2.9cm}X@{}}
 Institución & Diario de Yucatán (prensa) \\
-Qué contiene & Notas sobre lluvias en Mérida (fecha, sección, URL); 170 notas en 2 sitemaps de prueba \\
-Periodo · resolución & dic-2017–presente · Por nota \\
-Formato · acceso & XML (sitemaps) + HTML · Libre (robots.txt lo permite); guardar solo metadatos y cifras \\
+Qué contiene & Índice de notas con palabras de lluvia en el enlace (fecha, sección, URL): 6,589 notas de \textasciitilde{}494,000 URLs revisadas \\
+Periodo · resolución & dic-2017 a nov-2026 · Por nota \\
+Formato · acceso & XML (sitemaps) $\rightarrow$ CSV · Libre (robots.txt lo permite); guardar solo metadatos y cifras \\
 Confiabilidad & Media \\
-Limitaciones & Fuente secundaria; el texto tiene derechos de autor. \\
-Uso propuesto & Catálogo de eventos percibidos (p. ej. lluvia récord 30-may/1-jun-2026, 159 colonias afectadas). \\
-Estado & Script y muestra · {\small\nolinkurl{ejemplo_scraping_diario_yucatan.py, muestra_diario_yucatan_notas_lluvia.csv}} \\
+Limitaciones & Fuente secundaria; el texto tiene derechos de autor (solo se guardan metadatos). Filtra por palabras del enlace: incluye notas de otras regiones y algunas que no son del clima, y omite las que no usan esas palabras. \\
+Uso propuesto & Índice de eventos percibidos (p. ej. lluvia récord 30-may/1-jun-2026, 159 colonias afectadas). \\
+Estado & Descargado: índice completo con script · {\small\nolinkurl{diario_yucatan_notas_lluvia_2017_2026.csv; scripts/scraping_diario_yucatan.py}} \\
 Enlace & \url{https://www.yucatan.com.mx/sitemap_index.xml} \\
 \end{tabularx}
 \end{ficha}
@@ -584,7 +584,7 @@ Los círculos son las estaciones del SMN con al menos 10 años completos; el nú
 \section{Pendientes}
 \begin{enumerate}[leftmargin=1.4em,itemsep=2pt]
 \item C5.1 (CONAGUA): la lluvia diaria y horaria completa de las estaciones de Mérida está en un CD de \$13 MXN que no se recogió; solo hay lluvia cada 10 minutos de abril a junio de 2022. Sigue siendo la vía si se necesita intensidad.
-\item Programar el scraping del SMN (C6.1) para que corra cada semana y vaya acumulando la serie de intensidad.
+\item Seguir capturando el SIVEA (C6.1) con \texttt{scraping\_smn\_sivea.py} al menos cada 60 días: el visor solo guarda 90 y, sin captura periódica, la serie queda como una foto del 27 de agosto al 24 de noviembre de 2026.
 \item El tablero de Power BI de SIEGY (C3.3) y las capas del Geoportal de Mérida (C4.1) solo se pueden consultar en línea.
 \end{enumerate}
 

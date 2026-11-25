@@ -113,5 +113,32 @@ Límites que conviene tener presentes:
 - C5.1 (CONAGUA): la lluvia horaria completa está en un CD con pago de derechos que el equipo decidió no recoger. Solo hay lluvia cada 10 minutos de abril a junio de 2022 (carpeta de Drive del Organismo de Cuenca); los archivos de «MERIDA CONAGUA» de 2025 tienen de 0 a 42 % de cobertura de abril a septiembre y se descartaron.
 - Los originales con datos personales no están en el repositorio; su huella SHA-256 está en `05_Solicitudes_gobierno/respuestas_pnt_procedencia.csv`.
 
+## Scraping (C6): cobertura y límites
+Scripts `scraping_smn_sivea.py`, `scraping_procivy.py` y `scraping_diario_yucatan.py`; capturas del 24-nov-2026.
+
+### SIVEA (SMN): estaciones de Yucatán, ventana de 90 días
+| Estación | Tipo | Registros | Desde (UTC) | Hasta (UTC) | Cobertura | Días con lluvia |
+|---|---|---:|---|---|---:|---:|
+| DZILAM | EMA | 10,647 | 2026-08-27 00:30:00 | 2026-11-24 22:50:00 | 82.2 % | 18 |
+| MERIDA | ESMA | 2 | 2026-10-05 18:30:04 | 2026-11-11 16:30:04 | 0.0 % | 0 |
+| PROGRESO | ESMA | 12,418 | 2026-08-27 00:30:05 | 2026-11-25 00:10:00 | 95.8 % | 28 |
+| TANTAQUIN | EMA | 12,582 | 2026-08-27 00:30:00 | 2026-11-24 22:30:00 | 97.2 % | 47 |
+| VALLADOLID | ESMA | 12,049 | 2026-08-27 00:30:00 | 2026-11-25 00:10:00 | 93.0 % | 26 |
+
+- **«MERIDA» aparece en el visor pero casi no transmite:** su serie tiene 2 registros en 90 días. La estación con serie continua más cercana es PROGRESO (~30 km).
+- **Contraste con la serie diaria del SMN (CLICOM) en Progreso:** en 23 días comparables (con ≥120 de 144 registros) el SIVEA suma 6.8 mm y CLICOM 34.6 mm; correlación diaria 0.30.
+- **Días en que difieren ≥10 mm** (SIVEA / CLICOM Progreso / CLICOM Mérida CONAGUA): 2026-09-07: 0.0 / 24.7 / 26.1 mm.
+  El 7-sep-2026 PROCIVY registró una onda tropical con inundación de viviendas y predios; el SIVEA de Progreso marca 0.0 mm con el día completo de registros. **Muy probablemente el canal de lluvia del SIVEA trae ceros donde falta el dato** (igual que CLICOM): no usarlo para medir intensidad ni para afirmar que no llovió.
+- La serie crece solo si se corre el scraper; el visor borra lo anterior a 90 días.
+
+### PROCIVY: boletines de ciclones, temporadas 2019 a 2026
+- 413 boletines de 108 sistemas con boletines, de 124 sistemas listados (2019-05-21 a 2026-10-07).
+- **16 sistemas dicen «No hay boletines»** (no amenazaron a Yucatán); figuran con 0 boletines.
+- Solo 6 boletines dan la distancia a Mérida en el texto, así que la distancia mínima es poco informativa; no hay lluvia en mm.
+
+### Diario de Yucatán: índice de notas
+- 6,589 notas con palabras de lluvia en el enlace, de ~494,000 URLs revisadas (2017-12-29 a 2026-11-24). Solo metadatos (fecha, sección, enlace).
+- El filtro es por palabras del enlace (lluvia, inundación, tormenta, huracán…): incluye notas de otras regiones del mundo y algunas que no son del clima, y se pierden las que no usan esas palabras. Es un índice, no un conteo de eventos.
+
 ## Procedencia
 Cada fuente y archivo está en [`MANIFIESTO_FUENTES.csv`](MANIFIESTO_FUENTES.csv) y [`MANIFIESTO_ARCHIVOS.csv`](MANIFIESTO_ARCHIVOS.csv) (URL, versión, fecha de extracción, licencia, responsable, tamaño y SHA-256).

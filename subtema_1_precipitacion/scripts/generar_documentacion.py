@@ -29,6 +29,7 @@ from geo_agebs import IndiceAgeb  # noqa: E402
 DATOS = AQUI.parent / "datos"
 P7 = DATOS / "07_Datos_propios"
 P5 = DATOS / "05_Solicitudes_gobierno"
+P6 = DATOS / "06_Scraping"
 HOY = date.today().isoformat()
 
 RESPONSABLE = "Equipo 1 (Diego Loria, Rama Marin, José Ángel Pech)"  # todos los integrantes, por decisión del equipo
@@ -36,7 +37,7 @@ RESPONSABLE = "Equipo 1 (Diego Loria, Rama Marin, José Ángel Pech)"  # todos l
 # Fecha en que se bajó cada fuente (no se usa la fecha del archivo: un clon de Git la cambia).
 EXTRACCION = {f["id"]: "2026-10-01" for f in FUENTES}
 EXTRACCION.update({"C5.1": "2026-11-24", "C5.2": "2026-10-29", "C5.3": "2026-10-30", "C8.3": "2026-10-05",
-                   "C7.1": HOY, "C7.2": HOY, "C7.3": HOY})
+                   "C6.1": "2026-11-24", "C6.2": "2026-11-24", "C6.3": "2026-11-24", "C7.1": HOY, "C7.2": HOY, "C7.3": HOY})
 VERSION = {
     "C1.1": "Edición 2004–2006", "C1.2": "Edición 2023", "C1.3": "Marco Geoestadístico 2025",
     "C2.1": "Serie 1985–2023 (historico.datos.gob.mx)", "C2.2": "CENAPRED 2000–2023; CNPC 2018–2025",
@@ -44,8 +45,9 @@ VERSION = {
     "C3.2": "Boletín 2026-3", "C3.3": "Boletín 2025-10", "C4.1": "Capas del Atlas 2017 (WMS)",
     "C4.2": "Publicado 2018 (datos ≤2017)", "C4.3": "Publicado jun-2024", "C5.1": "Respuesta al folio 340009400252326 (30-oct-2026); ESMA «MERIDA» abr–jun 2022 de la carpeta de Drive del Organismo de Cuenca (bajada el 24-nov-2026)",
     "C5.2": "Respuesta al folio 1190579126000596 (oficios del 26 al 29-oct-2026)",
-    "C5.3": "Respuesta al folio 1191217326000207 (28 a 30-oct-2026)", "C6.1": "Muestra del 2026-10-01 (SIVEA guarda solo 90 días)", "C6.2": "Temporada 2020",
-    "C6.3": "Sitemaps dic-2017 a oct-2026 (muestra de 170 notas)",
+    "C5.3": "Respuesta al folio 1191217326000207 (28 a 30-oct-2026)", "C6.1": "Captura del 2026-11-24: ventana del 27-ago al 24-nov-2026 (SIVEA guarda 90 días; se acumula en cada corrida)",
+    "C6.2": "Temporadas 2019–2026, capturado el 2026-11-24",
+    "C6.3": "Sitemaps de dic-2017 al 24-nov-2026, capturado el 2026-11-24",
     "C7.1": f"Generado {HOY} con procesar_datos.py (datos SMN hasta 2026-09-25)",
     "C7.2": f"Generado {HOY}", "C7.3": f"Generado {HOY}",
     "C8.1": "MDT 5 m (2011–2017); MDT/MDS 1.5 m (edición 2025)", "C8.2": "CEM 4.0 (15 m)",
@@ -153,6 +155,40 @@ TABLAS = [
                ("ubicacion", "texto", "", "Cómo se resolvió el cruce espacial")]),
 ]
 
+TABLAS6 = [
+    dict(archivo="smn_sivea_yucatan_10min.csv", fuente="C6.1", gran="estación × 10 min", clave="estacion + fecha_utc", fecha="fecha_local",
+         desc="Serie acumulada de las estaciones automáticas de Yucatán del visor SIVEA (SMN). Cada corrida de `scraping_smn_sivea.py` agrega la ventana de 90 días sin duplicar. Celda vacía = sin dato. Ojo: el canal de lluvia puede traer 0.0 donde en realidad falta el dato (ver REPORTE_CALIDAD.md).",
+         cols=[("estacion", "texto", "", "Estación (DZILAM, MERIDA, PROGRESO, TANTAQUIN, VALLADOLID)"), ("fecha_local", "fecha-hora", "AAAA-MM-DD HH:MM:SS", "Hora local"),
+               ("fecha_utc", "fecha-hora", "AAAA-MM-DD HH:MM:SS", "Hora UTC"), ("precipitacion_mm", "decimal", "mm/10 min", "Lluvia del intervalo"),
+               ("temperatura_c", "decimal", "°C", "Temperatura del aire"), ("humedad_pct", "decimal", "%", "Humedad relativa")]),
+    dict(archivo="smn_sivea_estaciones.csv", fuente="C6.1", gran="estación", clave="estacion", fecha=None,
+         desc="Metadatos y cobertura de cada estación en la serie acumulada. «MERIDA» casi no transmite (2 registros en 90 días).",
+         cols=[("estacion", "texto", "", "Estación"), ("tipo", "texto", "", "EMA o ESMA"), ("municipio", "texto", "", "Municipio"), ("latitud", "decimal", "grados", "Latitud"),
+               ("longitud", "decimal", "grados", "Longitud"), ("altitud_m", "entero", "m", "Altitud"), ("registros", "entero", "registros", "Registros acumulados"),
+               ("desde_utc", "fecha-hora", "AAAA-MM-DD HH:MM:SS", "Primer registro"), ("hasta_utc", "fecha-hora", "AAAA-MM-DD HH:MM:SS", "Último registro"),
+               ("cobertura_pct", "decimal", "%", "Registros entre los esperados cada 10 min en ese lapso"), ("dias_con_lluvia", "entero", "días", "Días locales con lluvia > 0")]),
+    dict(archivo="smn_sivea_capturas.csv", fuente="C6.1", gran="captura × estación", clave="captura + estacion", fecha="captura",
+         desc="Bitácora de cada corrida del scraper: cuántos registros se bajaron y cuántos eran nuevos.",
+         cols=[("captura", "fecha-hora", "AAAA-MM-DD HH:MM", "Cuándo se corrió"), ("estacion", "texto", "", "Estación"), ("registros_descargados", "entero", "registros", "Registros de la ventana de 90 días"),
+               ("registros_nuevos", "entero", "registros", "Los que no estaban ya en la serie"), ("desde_utc", "fecha-hora", "", "Inicio de la ventana"), ("hasta_utc", "fecha-hora", "", "Fin de la ventana")]),
+    dict(archivo="procivy_boletines_2019_2026.csv", fuente="C6.2", gran="boletín", clave="id_sistema + boletin", fecha="fecha",
+         desc="Boletines de ciclones tropicales de PROCIVY (Protección Civil de Yucatán), temporadas 2019 a 2026. El resumen se recorta a 400 caracteres.",
+         cols=[("temporada", "entero", "AAAA", "Temporada ciclónica"), ("id_sistema", "texto", "", "Identificador del sistema en el sitio (NNAA)"), ("ciclon", "texto", "", "Nombre del ciclón, o número si no tiene"),
+               ("boletin", "texto", "", "Clave del boletín"), ("fecha", "fecha", "AAAA-MM-DD", "Fecha del boletín"), ("hora", "texto", "HH:MM", "Hora local"),
+               ("menciona_lluvia", "entero", "0/1", "El texto menciona lluvia"), ("dist_merida_km", "entero", "km", "Distancia a Mérida si el texto la da (solo unos cuantos boletines)"),
+               ("resumen", "texto", "", "Texto del boletín recortado a 400 caracteres")]),
+    dict(archivo="procivy_sistemas_2019_2026.csv", fuente="C6.2", gran="sistema", clave="temporada + id_sistema", fecha="fecha_formacion",
+         desc="Todos los sistemas que lista PROCIVY por temporada. Los que no amenazaron a Yucatán figuran con `sin_boletines = 1` y 0 boletines.",
+         cols=[("temporada", "entero", "AAAA", "Temporada"), ("id_sistema", "texto", "", "Identificador"), ("ciclon", "texto", "", "Nombre o número"), ("fecha_formacion", "fecha", "AAAA-MM-DD", "Fecha de formación"),
+               ("sin_boletines", "entero", "0/1", "PROCIVY indica «No hay boletines»"), ("boletines", "entero", "boletines", "Boletines emitidos"),
+               ("primer_boletin", "fecha", "AAAA-MM-DD", "Primer boletín"), ("ultimo_boletin", "fecha", "AAAA-MM-DD", "Último boletín"),
+               ("dist_minima_merida_km", "decimal", "km", "Distancia mínima a Mérida mencionada en los boletines (vacío si ninguno la da)"), ("menciona_lluvia", "entero", "0/1", "Algún boletín menciona lluvia")]),
+    dict(archivo="diario_yucatan_notas_lluvia_2017_2026.csv", fuente="C6.3", gran="nota", clave="url", fecha="fecha",
+         desc="Notas del Diario de Yucatán cuyo enlace contiene palabras de lluvia (lluvia, inundación, tormenta, huracán…). Solo metadatos: no se copia el texto de las notas. Incluye notas de otras regiones y algunas que no son del clima; sirve como índice, no como conteo de eventos.",
+         cols=[("fecha", "fecha", "AAAA-MM-DD", "Fecha de la nota (sale de la URL)"), ("seccion", "texto", "", "Sección (yucatan, merida, mexico, mundo…)"),
+               ("menciona_merida_slug", "entero", "0/1", "El enlace menciona Mérida"), ("slug", "texto", "", "Final del enlace"), ("url", "texto", "", "Enlace a la nota"), ("sitemap", "texto", "", "Sitemap de origen")]),
+]
+
 D = "día × departamento × servicio × procedencia"
 TABLAS5 = [
     dict(archivo="procivy_eventos_2024_2026.csv", fuente="C5.3", gran="evento", clave="fecha_inicio + fenomeno", fecha="fecha_inicio",
@@ -257,6 +293,15 @@ def documentar_tablas(tablas=None, carpeta=P7, titulo=None, intro=None, relacion
 
 def documentar_todo():
     documentar_tablas(
+        TABLAS6, P6, "# 06_Scraping — datos obtenidos por scraping (C6)",
+        "Scripts en `scripts/`: `scraping_smn_sivea.py` (SIVEA/SMN), `scraping_procivy.py` (PROCIVY) y `scraping_diario_yucatan.py` (Diario de Yucatán). "
+        "Se corren con `python scripts/<script>.py`; hacen peticiones espaciadas (3 a 5 s) con un User-Agent identificable y solo leen páginas públicas permitidas por su robots.txt. "
+        "**El SIVEA solo guarda 90 días**: `scraping_smn_sivea.py` fusiona cada captura con la serie anterior, así que hay que correrlo al menos cada ~60 días; sin eso la serie queda como una foto de la ventana capturada. "
+        "Controles y límites (incluido que la lluvia de Progreso en SIVEA no coincide con la serie diaria del SMN el 7-sep-2026): [`../REPORTE_CALIDAD.md`](../REPORTE_CALIDAD.md).",
+        ["- `smn_sivea_estaciones.csv` y `smn_sivea_capturas.csv` describen la serie `smn_sivea_yucatan_10min.csv` y su procedencia.",
+         "- `procivy_sistemas_2019_2026.csv` resume `procivy_boletines_2019_2026.csv` (une por `temporada` + `id_sistema`) y suma los sistemas sin boletines.",
+         "- El Diario de Yucatán es una fuente secundaria: el CSV es un índice de enlaces, no un conteo de eventos."])
+    documentar_tablas(
         TABLAS, P7, "# 07_Datos_propios — tablas calculadas por el equipo (C7)",
         "Insumo: registros diarios del SMN/CONAGUA (CLICOM) en `insumo_SMN_CONAGUA_estaciones/`. Procesamiento: `scripts/procesar_datos.py` "
         "(limpieza, agregación, Gumbel) y `scripts/generar_csv_dashboard.py`. UTF-8, coma como separador, fechas ISO. "
@@ -283,7 +328,7 @@ REGLAS = [  # (subcadena en la ruta relativa a datos/, fuente) — la primera qu
     ("conagua_sih", "C2.3"), ("conagua_smn", "C2.1"), ("cenapred", "C2.2"), ("declaratorias", "C2.2"),
     ("SIEGY_indicadores", "C3.1"), ("Boletin_2026_03", "C3.2"), ("Boletin_2025_10", "C3.3"),
     ("Atlas_Riesgos", "C4.2"), ("Estudio_Riesgos", "C4.3"), ("PACMUN", "(apoyo de C4)"),
-    ("C5.1_conagua", "C5.1"), ("conagua_esma", "C5.1"), ("C5.2_ayuntamiento", "C5.2"), ("C5.3_procivy", "C5.3"), ("procivy_eventos", "C5.3"),
+    ("smn_sivea", "C6.1"), ("procivy_boletines", "C6.2"), ("procivy_sistemas", "C6.2"), ("diario_yucatan_notas", "C6.3"), ("C5.1_conagua", "C5.1"), ("conagua_esma", "C5.1"), ("C5.2_ayuntamiento", "C5.2"), ("C5.3_procivy", "C5.3"), ("procivy_eventos", "C5.3"),
     ("ayuntamiento_", "C5.2"), ("05_Solicitudes", "C5"), ("sivea", "C6.1"), ("procivy", "C6.2"), ("diario_yucatan", "C6.3"),
     ("insumo_SMN", "C7.1"), ("indices_lluvia", "C7.2"), ("periodos_retorno", "C7.2"), ("tendencias", "C7.2"),
     ("eventos_extra", "C7.3"), ("07_Datos_propios", "C7.1"),
@@ -354,6 +399,43 @@ def promedio_1991_2020(d):
     anual = tot.resample("YS").sum(min_count=1).where(ok.resample("YS").sum() >= 12)
     a = anual[(anual.index.year >= 1991) & (anual.index.year <= 2020)].dropna()
     return (round(a.mean(), 1) if len(a) else np.nan), len(a)
+
+
+def scraping_lineas():
+    """Controles medidos del scraping (C6): cobertura del SIVEA, contraste con CLICOM, PROCIVY y Diario."""
+    est = pd.read_csv(P6 / "smn_sivea_estaciones.csv", dtype=str)
+    serie = pd.read_csv(P6 / "smn_sivea_yucatan_10min.csv", dtype={"estacion": str})
+    clicom = pd.read_csv(P7 / "smn_precip_diaria.csv", dtype={"estacion": str}, parse_dates=["fecha"])
+    pr = serie[(serie.estacion == "PROGRESO") & serie.precipitacion_mm.notna()].copy()
+    pr["dia"] = pd.to_datetime(pr.fecha_local.str[:10])
+    d = pr.groupby("dia").precipitacion_mm.agg(suma="sum", n="size")
+    cl = clicom[clicom.estacion == "31023"].set_index("fecha")["precip_mm"].dropna().rename("clicom")
+    cm = clicom[clicom.estacion == "31097"].set_index("fecha")["precip_mm"].dropna().rename("clicom_merida")
+    comp = d[d.n >= 120].join(cl, how="inner").join(cm, how="left")
+    r = float(np.corrcoef(comp.suma, comp.clicom)[0, 1]) if len(comp) > 5 else float("nan")
+    dif = comp[(comp.clicom - comp.suma).abs() >= 10]
+    sis = pd.read_csv(P6 / "procivy_sistemas_2019_2026.csv", dtype=str)
+    bol = pd.read_csv(P6 / "procivy_boletines_2019_2026.csv", dtype=str)
+    dia = pd.read_csv(P6 / "diario_yucatan_notas_lluvia_2017_2026.csv", dtype=str)
+    L = ["## Scraping (C6): cobertura y límites",
+         "Scripts `scraping_smn_sivea.py`, `scraping_procivy.py` y `scraping_diario_yucatan.py`; capturas del 24-nov-2026.\n",
+         "### SIVEA (SMN): estaciones de Yucatán, ventana de 90 días",
+         "| Estación | Tipo | Registros | Desde (UTC) | Hasta (UTC) | Cobertura | Días con lluvia |", "|---|---|---:|---|---|---:|---:|"]
+    L += [f"| {r_.estacion} | {r_.tipo} | {int(r_.registros):,} | {r_.desde_utc} | {r_.hasta_utc} | {r_.cobertura_pct} % | {r_.dias_con_lluvia} |" for r_ in est.itertuples()]
+    L += ["",
+          "- **«MERIDA» aparece en el visor pero casi no transmite:** su serie tiene 2 registros en 90 días. La estación con serie continua más cercana es PROGRESO (~30 km).",
+          f"- **Contraste con la serie diaria del SMN (CLICOM) en Progreso:** en {len(comp)} días comparables (con ≥120 de 144 registros) el SIVEA suma {comp.suma.sum():.1f} mm y CLICOM {comp.clicom.sum():.1f} mm; correlación diaria {r:.2f}.",
+          "- **Días en que difieren ≥10 mm** (SIVEA / CLICOM Progreso / CLICOM Mérida CONAGUA): " + ("; ".join(f"{i:%Y-%m-%d}: {x.suma:.1f} / {x.clicom:.1f} / {x.clicom_merida if x.clicom_merida == x.clicom_merida else float('nan'):.1f} mm" for i, x in dif.iterrows()) or "ninguno") + ".",
+          "  El 7-sep-2026 PROCIVY registró una onda tropical con inundación de viviendas y predios; el SIVEA de Progreso marca 0.0 mm con el día completo de registros. **Muy probablemente el canal de lluvia del SIVEA trae ceros donde falta el dato** (igual que CLICOM): no usarlo para medir intensidad ni para afirmar que no llovió.",
+          "- La serie crece solo si se corre el scraper; el visor borra lo anterior a 90 días.\n",
+          "### PROCIVY: boletines de ciclones, temporadas 2019 a 2026",
+          f"- {len(bol):,} boletines de {int((sis.boletines.astype(int) > 0).sum())} sistemas con boletines, de {len(sis)} sistemas listados ({bol.fecha.min()} a {bol.fecha.max()}).",
+          f"- **{int((sis.sin_boletines == '1').sum())} sistemas dicen «No hay boletines»** (no amenazaron a Yucatán); figuran con 0 boletines.",
+          f"- Solo {int(bol.dist_merida_km.notna().sum())} boletines dan la distancia a Mérida en el texto, así que la distancia mínima es poco informativa; no hay lluvia en mm.\n",
+          "### Diario de Yucatán: índice de notas",
+          f"- {len(dia):,} notas con palabras de lluvia en el enlace, de ~494,000 URLs revisadas ({dia.fecha.min()} a {dia.fecha.max()}). Solo metadatos (fecha, sección, enlace).",
+          "- El filtro es por palabras del enlace (lluvia, inundación, tormenta, huracán…): incluye notas de otras regiones del mundo y algunas que no son del clima, y se pierden las que no usan esas palabras. Es un índice, no un conteo de eventos.\n"]
+    return L
 
 
 def reporte():
@@ -433,6 +515,7 @@ def reporte():
           "- PROCIVY solo entregó desde octubre de 2024 y sus fechas venían en texto libre; un registro con año 2027 se conservó sin corregir y se marcó.",
           "- C5.1 (CONAGUA): la lluvia horaria completa está en un CD con pago de derechos que el equipo decidió no recoger. Solo hay lluvia cada 10 minutos de abril a junio de 2022 (carpeta de Drive del Organismo de Cuenca); los archivos de «MERIDA CONAGUA» de 2025 tienen de 0 a 42 % de cobertura de abril a septiembre y se descartaron.",
           "- Los originales con datos personales no están en el repositorio; su huella SHA-256 está en `05_Solicitudes_gobierno/respuestas_pnt_procedencia.csv`.\n",
+          ] + scraping_lineas() + [
           "## Procedencia",
           "Cada fuente y archivo está en [`MANIFIESTO_FUENTES.csv`](MANIFIESTO_FUENTES.csv) y [`MANIFIESTO_ARCHIVOS.csv`](MANIFIESTO_ARCHIVOS.csv) "
           "(URL, versión, fecha de extracción, licencia, responsable, tamaño y SHA-256).\n"]

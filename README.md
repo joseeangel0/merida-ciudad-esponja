@@ -29,7 +29,7 @@ Detalle del subtema, cómo regenerarlo todo y pendientes: [`subtema_1_precipitac
 | C3 SIEGY (3) | C3.1 y C3.2 completas; **C3.3 parcial** (solo el boletín en PDF; el tablero Power BI no se puede descargar) |
 | C4 GeoPortal / Ayuntamiento (3) | C4.2 y C4.3 descargadas (PDF pesados fuera de Git); **C4.1 solo consulta en línea** (visor WMS) |
 | C5 Solicitudes PNT (3) | **Las tres respondieron (26 a 30-oct-2026).** C5.2 (Ayuntamiento) y C5.3 (PROCIVY) procesadas y anonimizadas; **C5.1 (CONAGUA)**: la lluvia horaria completa está en un CD de $13 MXN que no se recogió; como extra hay lluvia cada 10 minutos de abril a junio de 2022 (carpeta de Drive del Organismo de Cuenca) |
-| C6 Scraping (3) | **Solo muestras** de octubre-2026 + scripts de ejemplo |
+| C6 Scraping (3) | **Datos reales capturados el 24-nov-2026:** SIVEA (SMN, 90 días de 5 estaciones de Yucatán), boletines de PROCIVY 2019–2026 e índice de notas del Diario. El SIVEA hay que seguir capturándolo (solo guarda 90 días) y su lluvia de Progreso no coincide con la serie diaria del SMN el 7-sep-2026; «MERIDA» casi no transmite |
 | C7 Datos propios (3) | Completas (series, índices extremos, periodos de retorno, eventos ≥100 mm) |
 | C8 LiDAR (3) | C8.1 y C8.2 descargadas; C8.3 (NASA GEDI/ICESat-2) descargada y recortada a Mérida (única fuente LiDAR real del catálogo) |
 | C9 AR (3) | Completas (edificios de Overture, alturas derivadas, OSM) |
