@@ -7,4 +7,5 @@ pandas
 pypdf
 pyproj
 pyshp
+pyxlsb
 xlrd
