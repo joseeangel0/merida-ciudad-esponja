@@ -33,6 +33,27 @@ ayuntamiento_desague_calles_litros_colonia_dia.csv,fecha,fecha,AAAA-MM-DD,Día d
 ayuntamiento_desague_calles_litros_colonia_dia.csv,colonia,texto,,Colonia o fraccionamiento (normalizado)
 ayuntamiento_desague_calles_litros_colonia_dia.csv,servicios,entero,servicios,Desagües realizados
 ayuntamiento_desague_calles_litros_colonia_dia.csv,litros,entero,litros,Agua desalojada
+conagua_esma_merida_10min_2022.csv,fecha_hora_local,fecha-hora,AAAA-MM-DD HH:MM,Hora local; el desfase con UTC cambia de 6 a 5 horas en abril de 2022 (probable horario de verano)
+conagua_esma_merida_10min_2022.csv,fecha_hora_utc,fecha-hora,AAAA-MM-DD HH:MM,Hora UTC del registro
+conagua_esma_merida_10min_2022.csv,precipitacion_mm,decimal,mm/10 min,Lluvia acumulada en el intervalo de 10 minutos
+conagua_esma_merida_intensidad_mensual_2022.csv,mes,texto,AAAA-MM,Mes en hora local
+conagua_esma_merida_intensidad_mensual_2022.csv,registros,entero,registros,Registros de 10 min en el mes
+conagua_esma_merida_intensidad_mensual_2022.csv,cobertura_pct,decimal,%,Registros entre los esperados del mes
+conagua_esma_merida_intensidad_mensual_2022.csv,lluvia_total_mm,decimal,mm,Lluvia total del mes
+conagua_esma_merida_intensidad_mensual_2022.csv,max_10min_mm,decimal,mm,Máximo en un intervalo de 10 minutos
+conagua_esma_merida_intensidad_mensual_2022.csv,max_10min_hora_local,fecha-hora,AAAA-MM-DD HH:MM,Hora local de ese intervalo
+conagua_esma_merida_intensidad_mensual_2022.csv,max_1h_mm,decimal,mm,Máxima lluvia en 1 hora (6 intervalos seguidos)
+conagua_esma_merida_intensidad_mensual_2022.csv,max_1h_inicio_local,fecha-hora,AAAA-MM-DD HH:MM,Inicio de esa hora
+conagua_esma_merida_intensidad_mensual_2022.csv,max_24h_mm,decimal,mm,Máxima lluvia en 24 horas móviles
+conagua_esma_merida_intensidad_mensual_2022.csv,max_24h_termina_local,fecha-hora,AAAA-MM-DD HH:MM,Fin de esas 24 horas
+conagua_esma_merida_intensidad_mensual_2022.csv,lluvia_clicom_31044_mm,decimal,mm,Lluvia de CLICOM 31044 en los mismos días
+conagua_esma_merida_intensidad_mensual_2022.csv,correlacion_diaria_clicom,decimal,r,Correlación entre la lluvia diaria de ambas series
+conagua_esma_merida_intensidad_mensual_2022.csv,nota,texto,,"Advertencia de calidad, si la hay"
+conagua_esma_procedencia.csv,archivo,texto,,Archivo
+conagua_esma_procedencia.csv,fuente,texto,,Carpeta de Drive que indicó el Organismo de Cuenca
+conagua_esma_procedencia.csv,sha256,texto,,SHA-256 del archivo
+conagua_esma_procedencia.csv,bytes,entero,bytes,Tamaño
+conagua_esma_procedencia.csv,fecha_descarga,fecha,AAAA-MM-DD,Cuándo se bajó
 respuestas_pnt_procedencia.csv,archivo,texto,,Archivo
 respuestas_pnt_procedencia.csv,en_git,texto,,"Si está en el repositorio y, si no, por qué"
 respuestas_pnt_procedencia.csv,sha256_original,texto,,SHA-256 del archivo recibido

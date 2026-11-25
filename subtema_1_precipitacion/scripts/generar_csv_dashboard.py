@@ -68,7 +68,15 @@ def datos_pnt():
     procivy = [[r["fecha_texto_original"], r["fecha_inicio"], r["fenomeno"], r["alerta_siat"], r["efectos"],
                 r["afectaciones_merida"], r["personas_afectadas"], r["declaratorias"], r["nota"]]
                for r in leer("procivy_eventos_2024_2026.csv", P5)]
+    dia_ev = "2022-06-28"   # día con la máxima lluvia en 1 h de la ESMA «MERIDA»
+    esma = {"mensual": [[r["mes"], int(r["registros"]), num(r["cobertura_pct"]), num(r["lluvia_total_mm"]), num(r["max_10min_mm"]),
+                         num(r["max_1h_mm"]), num(r["max_24h_mm"]), num(r["lluvia_clicom_31044_mm"]), num(r["correlacion_diaria_clicom"]), r["nota"]]
+                        for r in leer("conagua_esma_merida_intensidad_mensual_2022.csv", P5)],
+            "dia": dia_ev,
+            "tormenta": [[r["fecha_hora_local"][11:], num(r["precipitacion_mm"])] for r in leer("conagua_esma_merida_10min_2022.csv", P5)
+                         if r["fecha_hora_local"].startswith(dia_ev)]}
     return {
+        "esma2022": esma,
         "reportes_mes": {"anexo": sorted(mes_anexo.items()), "xls_desague": sorted(mes_xls.items()),
                          "xls_total": sorted(mes_total.items())},
         "evento": {"dias": dias, "desague": [dia_des.get(d, 0) for d in dias], "total": [dia_tot.get(d, 0) for d in dias],

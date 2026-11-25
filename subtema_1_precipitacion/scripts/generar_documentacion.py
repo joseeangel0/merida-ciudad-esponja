@@ -35,14 +35,14 @@ RESPONSABLE = "Equipo 1 (Diego Loria, Rama Marin, José Ángel Pech)"  # todos l
 
 # Fecha en que se bajó cada fuente (no se usa la fecha del archivo: un clon de Git la cambia).
 EXTRACCION = {f["id"]: "2026-10-01" for f in FUENTES}
-EXTRACCION.update({"C5.1": "2026-10-30", "C5.2": "2026-10-29", "C5.3": "2026-10-30", "C8.3": "2026-10-05",
+EXTRACCION.update({"C5.1": "2026-11-24", "C5.2": "2026-10-29", "C5.3": "2026-10-30", "C8.3": "2026-10-05",
                    "C7.1": HOY, "C7.2": HOY, "C7.3": HOY})
 VERSION = {
     "C1.1": "Edición 2004–2006", "C1.2": "Edición 2023", "C1.3": "Marco Geoestadístico 2025",
     "C2.1": "Serie 1985–2023 (historico.datos.gob.mx)", "C2.2": "CENAPRED 2000–2023; CNPC 2018–2025",
     "C2.3": "Actualizado jun-2025", "C3.1": "Programas presupuestarios 2024–2025",
     "C3.2": "Boletín 2026-3", "C3.3": "Boletín 2025-10", "C4.1": "Capas del Atlas 2017 (WMS)",
-    "C4.2": "Publicado 2018 (datos ≤2017)", "C4.3": "Publicado jun-2024", "C5.1": "Respuesta al folio 340009400252326 (30-oct-2026)",
+    "C4.2": "Publicado 2018 (datos ≤2017)", "C4.3": "Publicado jun-2024", "C5.1": "Respuesta al folio 340009400252326 (30-oct-2026); ESMA «MERIDA» abr–jun 2022 de la carpeta de Drive del Organismo de Cuenca (bajada el 24-nov-2026)",
     "C5.2": "Respuesta al folio 1190579126000596 (oficios del 26 al 29-oct-2026)",
     "C5.3": "Respuesta al folio 1191217326000207 (28 a 30-oct-2026)", "C6.1": "Muestra del 2026-10-01 (SIVEA guarda solo 90 días)", "C6.2": "Temporada 2020",
     "C6.3": "Sitemaps dic-2017 a oct-2026 (muestra de 170 notas)",
@@ -184,6 +184,23 @@ TABLAS5 = [
          desc="Desagües de calles inundadas de 2024 a 2026 con los litros desalojados (Departamento de Drenaje), por día de atención y colonia.",
          cols=[("fecha", "fecha", "AAAA-MM-DD", "Día de atención (o de solicitud si no hay)"), ("colonia", "texto", "", "Colonia o fraccionamiento (normalizado)"),
                ("servicios", "entero", "servicios", "Desagües realizados"), ("litros", "entero", "litros", "Agua desalojada")]),
+    dict(archivo="conagua_esma_merida_10min_2022.csv", fuente="C5.1", gran="10 minutos", clave="fecha_hora_local", fecha="fecha_hora_local",
+         desc="Lluvia cada 10 minutos de la ESMA «MERIDA» (CONAGUA/SMN, sitio del Observatorio) de abril a junio de 2022. Los archivos de origen son mensuales en UTC, por eso empieza el 31 de marzo a las 18:00 hora local y termina el 30 de junio a las 18:50 (el resto de junio local está en el archivo de julio, que no se bajó).",
+         cols=[("fecha_hora_local", "fecha-hora", "AAAA-MM-DD HH:MM", "Hora local; el desfase con UTC cambia de 6 a 5 horas en abril de 2022 (probable horario de verano)"),
+               ("fecha_hora_utc", "fecha-hora", "AAAA-MM-DD HH:MM", "Hora UTC del registro"), ("precipitacion_mm", "decimal", "mm/10 min", "Lluvia acumulada en el intervalo de 10 minutos")]),
+    dict(archivo="conagua_esma_merida_intensidad_mensual_2022.csv", fuente="C5.1", gran="mes", clave="mes", fecha="mes",
+         desc="Cobertura, máximos de intensidad y contraste con la serie diaria CLICOM (estación 31044, el mismo sitio) por mes. Mayo de 2022 difiere de CLICOM: usar con reserva.",
+         cols=[("mes", "texto", "AAAA-MM", "Mes en hora local"), ("registros", "entero", "registros", "Registros de 10 min en el mes"),
+               ("cobertura_pct", "decimal", "%", "Registros entre los esperados del mes"), ("lluvia_total_mm", "decimal", "mm", "Lluvia total del mes"),
+               ("max_10min_mm", "decimal", "mm", "Máximo en un intervalo de 10 minutos"), ("max_10min_hora_local", "fecha-hora", "AAAA-MM-DD HH:MM", "Hora local de ese intervalo"),
+               ("max_1h_mm", "decimal", "mm", "Máxima lluvia en 1 hora (6 intervalos seguidos)"), ("max_1h_inicio_local", "fecha-hora", "AAAA-MM-DD HH:MM", "Inicio de esa hora"),
+               ("max_24h_mm", "decimal", "mm", "Máxima lluvia en 24 horas móviles"), ("max_24h_termina_local", "fecha-hora", "AAAA-MM-DD HH:MM", "Fin de esas 24 horas"),
+               ("lluvia_clicom_31044_mm", "decimal", "mm", "Lluvia de CLICOM 31044 en los mismos días"),
+               ("correlacion_diaria_clicom", "decimal", "r", "Correlación entre la lluvia diaria de ambas series"), ("nota", "texto", "", "Advertencia de calidad, si la hay")]),
+    dict(archivo="conagua_esma_procedencia.csv", fuente="C5.1", gran="archivo", clave="archivo", fecha=None,
+         desc="Archivos .xlsb de origen (no se versionan): carpeta de Drive, SHA-256 y fecha de descarga.",
+         cols=[("archivo", "texto", "", "Archivo"), ("fuente", "texto", "", "Carpeta de Drive que indicó el Organismo de Cuenca"), ("sha256", "texto", "", "SHA-256 del archivo"),
+               ("bytes", "entero", "bytes", "Tamaño"), ("fecha_descarga", "fecha", "AAAA-MM-DD", "Cuándo se bajó")]),
     dict(archivo="respuestas_pnt_procedencia.csv", fuente="C5", gran="archivo", clave="archivo", fecha=None,
          desc="Cartas de respuesta publicadas y huella (SHA-256) de los originales que no se publican por traer datos personales.",
          cols=[("archivo", "texto", "", "Archivo"), ("en_git", "texto", "", "Si está en el repositorio y, si no, por qué"), ("sha256_original", "texto", "", "SHA-256 del archivo recibido"),
@@ -252,7 +269,7 @@ def documentar_todo():
         "Fuente: respuestas a las solicitudes de acceso a la información enviadas el 01-oct-2026 por la PNT a CONAGUA (C5.1), el Ayuntamiento de Mérida (C5.2) y PROCIVY (C5.3). "
         "Procesamiento: `scripts/procesar_pnt.py`. En `respuestas/` están las cartas oficiales (sin metadatos). "
         "**Los Excel y PDF originales del Ayuntamiento traen nombre, teléfono, dirección y coordenadas de los solicitantes y NO se publican**: aquí solo hay conteos por día, por mes y AGEB, y por colonia. "
-        "Su huella SHA-256 está en `respuestas_pnt_procedencia.csv`. C5.1 (CONAGUA) respondió que tiene los datos pero solo los entrega en un CD con pago de derechos de reproducción; el equipo decidió no recogerlos. "
+        "Su huella SHA-256 está en `respuestas_pnt_procedencia.csv`. C5.1 (CONAGUA) respondió que tiene la lluvia horaria pero solo la entrega en un CD con pago de derechos de reproducción; el equipo decidió no recogerlo. Como extra se incluye la lluvia cada 10 minutos de la ESMA «MERIDA» de abril a junio de 2022, tomada de la carpeta de Drive que indicó el Organismo de Cuenca (`procesar_esma_drive.py`). "
         "Controles y límites: [`../REPORTE_CALIDAD.md`](../REPORTE_CALIDAD.md).",
         ["- `ayuntamiento_reportes_drenaje_dia.csv` y `ayuntamiento_reportes_drenaje_ageb_mes.csv` vienen del mismo XLS (2024–oct-2026); la primera conserva el canal de llegada y la segunda la ubicación por AGEB.",
          "- `origen = trabajo_programado` son programas del propio Ayuntamiento (sin coordenadas ni relación con la lluvia); para ligar reportes con lluvia hay que usar `origen = solicitud`.",
@@ -266,7 +283,7 @@ REGLAS = [  # (subcadena en la ruta relativa a datos/, fuente) — la primera qu
     ("conagua_sih", "C2.3"), ("conagua_smn", "C2.1"), ("cenapred", "C2.2"), ("declaratorias", "C2.2"),
     ("SIEGY_indicadores", "C3.1"), ("Boletin_2026_03", "C3.2"), ("Boletin_2025_10", "C3.3"),
     ("Atlas_Riesgos", "C4.2"), ("Estudio_Riesgos", "C4.3"), ("PACMUN", "(apoyo de C4)"),
-    ("C5.1_conagua", "C5.1"), ("C5.2_ayuntamiento", "C5.2"), ("C5.3_procivy", "C5.3"), ("procivy_eventos", "C5.3"),
+    ("C5.1_conagua", "C5.1"), ("conagua_esma", "C5.1"), ("C5.2_ayuntamiento", "C5.2"), ("C5.3_procivy", "C5.3"), ("procivy_eventos", "C5.3"),
     ("ayuntamiento_", "C5.2"), ("05_Solicitudes", "C5"), ("sivea", "C6.1"), ("procivy", "C6.2"), ("diario_yucatan", "C6.3"),
     ("insumo_SMN", "C7.1"), ("indices_lluvia", "C7.2"), ("periodos_retorno", "C7.2"), ("tendencias", "C7.2"),
     ("eventos_extra", "C7.3"), ("07_Datos_propios", "C7.1"),
@@ -401,13 +418,20 @@ def reporte():
           "| Control | Resultado | Detalle |", "|---|---|---|"] + \
          [f"| {r.control} | {r.valor} | {r.detalle} |" for r in pd.read_csv(P5 / "controles_calidad_pnt.csv", dtype=str).fillna("").itertuples()] + [
           "",
+          "### Lluvia cada 10 minutos de la ESMA «MERIDA» (C5.1, abril a junio de 2022)",
+          "Del Drive del Organismo de Cuenca; contraste con la serie diaria CLICOM de la estación 31044 (mismo sitio). Calculado por `scripts/procesar_esma_drive.py`.\n",
+          "| Mes | Cobertura | Lluvia total | Máx. 10 min | Máx. 1 h | Máx. 24 h | CLICOM 31044 | Correlación diaria | Nota |", "|---|---:|---:|---:|---:|---:|---:|---:|---|"] + \
+         [f"| {r.mes} | {r.cobertura_pct} % | {r.lluvia_total_mm} mm | {r.max_10min_mm} mm | {r.max_1h_mm} mm | {r.max_24h_mm} mm | {r.lluvia_clicom_31044_mm} mm | {r.correlacion_diaria_clicom} | {r.nota if isinstance(r.nota, str) else ''} |"
+          for r in pd.read_csv(P5 / "conagua_esma_merida_intensidad_mensual_2022.csv").itertuples()] + [
+          "",
+          "Los archivos de origen son mensuales en UTC; por eso la serie empieza el 31 de marzo (hora local) y termina el 30 de junio a las 18:50. En mayo de 2022 el archivo marca 34.6 mm y CLICOM 8.1 mm (el 30 de mayo, 19.6 mm contra 1.5 mm): puede ser lluvia muy local o que ambas series asignan distinto el día; se usa con reserva.\n",
           "Límites que conviene tener presentes:",
           "- Los reportes de drenaje son **registros administrativos** del Ayuntamiento: miden la demanda atendida, no la superficie inundada, y dependen de que la gente llame.",
           "- El 31 % de los reportes de 2024–2026 es trabajo programado del propio Ayuntamiento; no se relaciona con la lluvia y no tiene coordenadas. Para analizar lluvia contra afectaciones hay que filtrar `origen = solicitud`.",
           "- No hay datos de 2023, y los de 2018–2022 (anexo PDF) y 2024–2026 (XLS) vienen de entregas distintas; no se pueden comparar sin cuidado.",
           "- El Ayuntamiento declaró que **no existen** registros de pluviómetros municipales ni un listado de puntos de encharcamiento recurrente.",
           "- PROCIVY solo entregó desde octubre de 2024 y sus fechas venían en texto libre; un registro con año 2027 se conservó sin corregir y se marcó.",
-          "- C5.1 (CONAGUA): la información existe pero el equipo decidió no recogerla (CD con pago de derechos); no hay datos de esa respuesta en el repositorio.",
+          "- C5.1 (CONAGUA): la lluvia horaria completa está en un CD con pago de derechos que el equipo decidió no recoger. Solo hay lluvia cada 10 minutos de abril a junio de 2022 (carpeta de Drive del Organismo de Cuenca); los archivos de «MERIDA CONAGUA» de 2025 tienen de 0 a 42 % de cobertura de abril a septiembre y se descartaron.",
           "- Los originales con datos personales no están en el repositorio; su huella SHA-256 está en `05_Solicitudes_gobierno/respuestas_pnt_procedencia.csv`.\n",
           "## Procedencia",
           "Cada fuente y archivo está en [`MANIFIESTO_FUENTES.csv`](MANIFIESTO_FUENTES.csv) y [`MANIFIESTO_ARCHIVOS.csv`](MANIFIESTO_ARCHIVOS.csv) "

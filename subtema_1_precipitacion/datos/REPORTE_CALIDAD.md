@@ -93,13 +93,24 @@ Procesadas con `scripts/procesar_pnt.py`; los controles salen de [`05_Solicitude
 | Desagüe: hoja 30MAY-1JUNIO es un extracto de 2026 | sí | 41 reportes y 1,510,000 L; no se suma dos veces |
 | Desagüe: filas con año distinto al de su hoja | 1 | se conservan con su fecha real |
 
+### Lluvia cada 10 minutos de la ESMA «MERIDA» (C5.1, abril a junio de 2022)
+Del Drive del Organismo de Cuenca; contraste con la serie diaria CLICOM de la estación 31044 (mismo sitio). Calculado por `scripts/procesar_esma_drive.py`.
+
+| Mes | Cobertura | Lluvia total | Máx. 10 min | Máx. 1 h | Máx. 24 h | CLICOM 31044 | Correlación diaria | Nota |
+|---|---:|---:|---:|---:|---:|---:|---:|---|
+| 2022-04 | 99.9 % | 9.8 mm | 5.8 mm | 9.4 mm | 9.4 mm | 15.1 mm | 1.0 |  |
+| 2022-05 | 100.0 % | 34.6 mm | 6.8 mm | 19.0 mm | 25.2 mm | 8.1 mm | 0.47 | difiere de CLICOM: usar con reserva |
+| 2022-06 | 99.3 % | 164.0 mm | 13.8 mm | 40.2 mm | 43.6 mm | 159.1 mm | 0.78 |  |
+
+Los archivos de origen son mensuales en UTC; por eso la serie empieza el 31 de marzo (hora local) y termina el 30 de junio a las 18:50. En mayo de 2022 el archivo marca 34.6 mm y CLICOM 8.1 mm (el 30 de mayo, 19.6 mm contra 1.5 mm): puede ser lluvia muy local o que ambas series asignan distinto el día; se usa con reserva.
+
 Límites que conviene tener presentes:
 - Los reportes de drenaje son **registros administrativos** del Ayuntamiento: miden la demanda atendida, no la superficie inundada, y dependen de que la gente llame.
 - El 31 % de los reportes de 2024–2026 es trabajo programado del propio Ayuntamiento; no se relaciona con la lluvia y no tiene coordenadas. Para analizar lluvia contra afectaciones hay que filtrar `origen = solicitud`.
 - No hay datos de 2023, y los de 2018–2022 (anexo PDF) y 2024–2026 (XLS) vienen de entregas distintas; no se pueden comparar sin cuidado.
 - El Ayuntamiento declaró que **no existen** registros de pluviómetros municipales ni un listado de puntos de encharcamiento recurrente.
 - PROCIVY solo entregó desde octubre de 2024 y sus fechas venían en texto libre; un registro con año 2027 se conservó sin corregir y se marcó.
-- C5.1 (CONAGUA): la información existe pero el equipo decidió no recogerla (CD con pago de derechos); no hay datos de esa respuesta en el repositorio.
+- C5.1 (CONAGUA): la lluvia horaria completa está en un CD con pago de derechos que el equipo decidió no recoger. Solo hay lluvia cada 10 minutos de abril a junio de 2022 (carpeta de Drive del Organismo de Cuenca); los archivos de «MERIDA CONAGUA» de 2025 tienen de 0 a 42 % de cobertura de abril a septiembre y se descartaron.
 - Los originales con datos personales no están en el repositorio; su huella SHA-256 está en `05_Solicitudes_gobierno/respuestas_pnt_procedencia.csv`.
 
 ## Procedencia

@@ -194,6 +194,16 @@
     </article>
 
     <article class="card span2">
+      <h2>Intensidad de la lluvia en Mérida: abril a junio de 2022</h2>
+      <p class="desc">Lluvia cada 10 minutos de la estación automática «MERIDA» (CONAGUA/SMN), de la carpeta de Drive que indicó el Organismo de Cuenca Península de Yucatán. Es la única lluvia por intensidad que tenemos y cubre solo estos tres meses.</p>
+      <div class="two">
+        <div class="scroll"><table id="t-esma"><thead><tr><th>Mes</th><th class="n">Total</th><th class="n">Máx. 10 min</th><th class="n">Máx. 1 h</th><th class="n">Máx. 24 h</th></tr></thead><tbody></tbody></table></div>
+        <div><h3 id="h-esma"></h3><div class="plot" id="c-esma"></div></div>
+      </div>
+      <p class="foot" id="nota-esma"></p>
+    </article>
+
+    <article class="card span2">
       <h2>Eventos extraordinarios (≥100 mm en 24 h)</h2>
       <p class="desc" id="ev-desc"></p>
       <div class="scroll"><table id="t-ev"><thead><tr><th>Fecha</th><th>Estación</th><th class="n">Lluvia (mm)</th><th>Evento asociado</th></tr></thead><tbody></tbody></table></div>
@@ -392,6 +402,7 @@ function render() {
 
   // reportes de drenaje y PROCIVY
   renderPNT();
+  renderESMA();
 
   // tabla de eventos
   $("ev-desc").textContent = `${ev.length} día(s) con ≥100 mm entre ${state.desde} y ${state.hasta}. El evento asociado se cruza con las reseñas de ciclones del SMN.`;
@@ -479,6 +490,23 @@ function renderPNT() {
     if (r[8]) { const w = el("span", { class: "warn", title: r[8] }, " ⚠ año 2027 en el original"); f.append(w); }
     tr.append(f, el("td", {}, r[2]), el("td", {}, r[4]), el("td", {}, r[5]), el("td", {}, r[6] === "NO APLICA" ? "—" : r[6])); tb.append(tr);
   });
+}
+
+// ------------------------------------------------------------------ intensidad (ESMA «MERIDA», abr-jun 2022)
+function renderESMA() {
+  const E = D.esma2022, tb = $("t-esma").querySelector("tbody"); tb.replaceChildren();
+  const mes = ["abril", "mayo", "junio"];
+  E.mensual.forEach(r => {
+    const tr = el("tr"); const m = el("td", {}, mes[+r[0].slice(5) - 4] + " 2022");
+    if (r[9]) m.append(el("span", { class: "warn", title: r[9] }, " ⚠"));
+    tr.append(m, el("td", { class: "n" }, fmt(r[3], 1) + " mm"), el("td", { class: "n" }, fmt(r[4], 1) + " mm"), el("td", { class: "n" }, fmt(r[5], 1) + " mm"), el("td", { class: "n" }, fmt(r[6], 1) + " mm"));
+    tb.append(tr);
+  });
+  const d = E.dia, dd = +d.slice(8) + " de " + ["", "", "", "", "abril", "mayo", "junio"][+d.slice(5, 7)] + " de " + d.slice(0, 4);
+  $("h-esma").textContent = "Lluvia cada 10 minutos el " + dd + " (la hora con más lluvia)";
+  lineChart($("c-esma"), { labels: E.tormenta.map(p => p[0]), series: [{ key: "esma", name: "Lluvia cada 10 min", color: "var(--accent)", values: E.tormenta.map(p => p[1]) }],
+    yUnit: "mm / 10 min", dec: 1, height: 220, dots: false, head: i => E.tormenta[i][0] + " h (hora local)", aria: "Lluvia cada 10 minutos durante la tormenta del 28 de junio de 2022" });
+  $("nota-esma").textContent = "⚠ Mayo de 2022 difiere de la serie diaria del SMN (34.6 mm contra 8.1 mm): úsalo con reserva. Los archivos de 2025 y los de 2026 de Mérida no sirven (cobertura de 0 a 42 % o no existen). Datos en datos/05_Solicitudes_gobierno/.";
 }
 
 // ------------------------------------------------------------------ mapa (Leaflet; si no hay red, se avisa)
