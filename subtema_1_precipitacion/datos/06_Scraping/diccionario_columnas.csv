@@ -1,0 +1,49 @@
+tabla,columna,tipo,unidad,descripcion
+smn_sivea_yucatan_10min.csv,estacion,texto,,"Estación (DZILAM, MERIDA, PROGRESO, TANTAQUIN, VALLADOLID)"
+smn_sivea_yucatan_10min.csv,fecha_local,fecha-hora,AAAA-MM-DD HH:MM:SS,Hora local
+smn_sivea_yucatan_10min.csv,fecha_utc,fecha-hora,AAAA-MM-DD HH:MM:SS,Hora UTC
+smn_sivea_yucatan_10min.csv,precipitacion_mm,decimal,mm/10 min,Lluvia del intervalo
+smn_sivea_yucatan_10min.csv,temperatura_c,decimal,°C,Temperatura del aire
+smn_sivea_yucatan_10min.csv,humedad_pct,decimal,%,Humedad relativa
+smn_sivea_estaciones.csv,estacion,texto,,Estación
+smn_sivea_estaciones.csv,tipo,texto,,EMA o ESMA
+smn_sivea_estaciones.csv,municipio,texto,,Municipio
+smn_sivea_estaciones.csv,latitud,decimal,grados,Latitud
+smn_sivea_estaciones.csv,longitud,decimal,grados,Longitud
+smn_sivea_estaciones.csv,altitud_m,entero,m,Altitud
+smn_sivea_estaciones.csv,registros,entero,registros,Registros acumulados
+smn_sivea_estaciones.csv,desde_utc,fecha-hora,AAAA-MM-DD HH:MM:SS,Primer registro
+smn_sivea_estaciones.csv,hasta_utc,fecha-hora,AAAA-MM-DD HH:MM:SS,Último registro
+smn_sivea_estaciones.csv,cobertura_pct,decimal,%,Registros entre los esperados cada 10 min en ese lapso
+smn_sivea_estaciones.csv,dias_con_lluvia,entero,días,Días locales con lluvia > 0
+smn_sivea_capturas.csv,captura,fecha-hora,AAAA-MM-DD HH:MM,Cuándo se corrió
+smn_sivea_capturas.csv,estacion,texto,,Estación
+smn_sivea_capturas.csv,registros_descargados,entero,registros,Registros de la ventana de 90 días
+smn_sivea_capturas.csv,registros_nuevos,entero,registros,Los que no estaban ya en la serie
+smn_sivea_capturas.csv,desde_utc,fecha-hora,,Inicio de la ventana
+smn_sivea_capturas.csv,hasta_utc,fecha-hora,,Fin de la ventana
+procivy_boletines_2019_2026.csv,temporada,entero,AAAA,Temporada ciclónica
+procivy_boletines_2019_2026.csv,id_sistema,texto,,Identificador del sistema en el sitio (NNAA)
+procivy_boletines_2019_2026.csv,ciclon,texto,,"Nombre del ciclón, o número si no tiene"
+procivy_boletines_2019_2026.csv,boletin,texto,,Clave del boletín
+procivy_boletines_2019_2026.csv,fecha,fecha,AAAA-MM-DD,Fecha del boletín
+procivy_boletines_2019_2026.csv,hora,texto,HH:MM,Hora local
+procivy_boletines_2019_2026.csv,menciona_lluvia,entero,0/1,El texto menciona lluvia
+procivy_boletines_2019_2026.csv,dist_merida_km,entero,km,Distancia a Mérida si el texto la da (solo unos cuantos boletines)
+procivy_boletines_2019_2026.csv,resumen,texto,,Texto del boletín recortado a 400 caracteres
+procivy_sistemas_2019_2026.csv,temporada,entero,AAAA,Temporada
+procivy_sistemas_2019_2026.csv,id_sistema,texto,,Identificador
+procivy_sistemas_2019_2026.csv,ciclon,texto,,Nombre o número
+procivy_sistemas_2019_2026.csv,fecha_formacion,fecha,AAAA-MM-DD,Fecha de formación
+procivy_sistemas_2019_2026.csv,sin_boletines,entero,0/1,PROCIVY indica «No hay boletines»
+procivy_sistemas_2019_2026.csv,boletines,entero,boletines,Boletines emitidos
+procivy_sistemas_2019_2026.csv,primer_boletin,fecha,AAAA-MM-DD,Primer boletín
+procivy_sistemas_2019_2026.csv,ultimo_boletin,fecha,AAAA-MM-DD,Último boletín
+procivy_sistemas_2019_2026.csv,dist_minima_merida_km,decimal,km,Distancia mínima a Mérida mencionada en los boletines (vacío si ninguno la da)
+procivy_sistemas_2019_2026.csv,menciona_lluvia,entero,0/1,Algún boletín menciona lluvia
+diario_yucatan_notas_lluvia_2017_2026.csv,fecha,fecha,AAAA-MM-DD,Fecha de la nota (sale de la URL)
+diario_yucatan_notas_lluvia_2017_2026.csv,seccion,texto,,"Sección (yucatan, merida, mexico, mundo…)"
+diario_yucatan_notas_lluvia_2017_2026.csv,menciona_merida_slug,entero,0/1,El enlace menciona Mérida
+diario_yucatan_notas_lluvia_2017_2026.csv,slug,texto,,Final del enlace
+diario_yucatan_notas_lluvia_2017_2026.csv,url,texto,,Enlace a la nota
+diario_yucatan_notas_lluvia_2017_2026.csv,sitemap,texto,,Sitemap de origen
