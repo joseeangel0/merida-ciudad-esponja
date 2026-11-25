@@ -524,4 +524,16 @@ Los círculos son las estaciones del SMN con al menos 10 años completos; el nú
 \end{{document}}
 """
 (DOC / "fuentes_precipitacion_merida.tex").write_text(documento, encoding="utf-8")
+# CSV del catálogo (el mismo que se entregó): se exporta desde fuentes.py para que no quede desfasado
+import csv as _csv
+_cat = {c[0]: c[1] for c in CATEGORIAS}
+with open(RAIZ / "fuentes_subtema1_precipitacion.csv", "w", encoding="utf-8-sig", newline="") as _f:
+    _w = _csv.writer(_f, lineterminator="\r\n")
+    _w.writerow(["Proyecto", "Mérida Ciudad Esponja – Subtema 1: Precipitación y eventos de lluvia"])
+    _w.writerow(["Integrantes", "Diego Loria; Rama Marin; Jose Pech"])
+    _w.writerow([])
+    _w.writerow(["ID", "Categoría", "Fuente", "Institución", "Qué mide", "Periodo", "Formato", "Acceso", "URL"])
+    for _r in FUENTES:
+        _w.writerow([_r["id"], _cat[_r["cat"]], _r["nombre"], _r["institucion"], _r["mide"], _r["periodo"], _r["formato"], _r["acceso"], _r["url"]])
+
 print("Listo: figuras, Excel y .tex generados.")
