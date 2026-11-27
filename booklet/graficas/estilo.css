@@ -1,0 +1,76 @@
+/* Estilo común del booklet · Equipo 1 · Mérida, Ciudad Esponja
+   Paleta con significado fijo: morado = lo que se analiza, oro = contra qué se compara,
+   oro oscuro = anotaciones, gris = contexto, tinta = títulos y texto, borde = rejillas. */
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap");
+
+:root {
+  --morado: #600d8b;
+  --oro: #ed9f22;
+  --oro-oscuro: #b45309;
+  --gris: #9ca3af;
+  --tinta: #0d0d0d;
+  --borde: #e5e7eb;
+  --fondo: #ffffff;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--tinta);
+  font-family: "Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.45;
+}
+.pagina { max-width: 800px; margin: 0 auto; padding: 24px 20px 40px; }
+
+/* ---------- Escena (gráfica con su anatomía) ---------- */
+.escena { margin: 0 0 28px; padding: 18px 18px 14px; border: 1px solid var(--borde); border-radius: 14px; background: var(--fondo); break-inside: avoid; page-break-inside: avoid; }
+.escena .rotulo { display: inline-block; margin: 0 0 6px; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--oro-oscuro); }
+.escena h2 { margin: 0 0 4px; font-size: 22px; line-height: 1.15; font-weight: 800; color: var(--tinta); text-wrap: balance; }
+.escena .subtitulo { margin: 0 0 10px; font-size: 12.5px; color: #4b5563; }
+.escena svg { display: block; width: 100%; height: auto; overflow: visible; }
+.escena .lectura { margin: 10px 0 6px; font-size: 13px; font-weight: 500; }
+.escena .lectura::before { content: "Cómo leerla · "; font-weight: 700; color: var(--morado); }
+.escena .pie { margin: 6px 0 0; padding-top: 6px; border-top: 1px solid var(--borde); font-size: 11px; color: #4b5563; }
+.escena .pie.aviso { color: var(--oro-oscuro); font-weight: 500; }
+.escena .error { color: var(--oro-oscuro); font-weight: 600; }
+
+/* ---------- Texto dentro de los SVG ---------- */
+svg text { font-family: "Outfit", system-ui, sans-serif; fill: var(--tinta); }
+svg .num { font-family: "JetBrains Mono", ui-monospace, monospace; }
+svg .eje text { font-size: 11px; fill: #4b5563; }
+svg .eje line, svg .eje path { stroke: var(--borde); }
+svg .nota { font-size: 12px; font-weight: 600; fill: var(--oro-oscuro); }
+svg .etiqueta { font-size: 12px; font-weight: 600; }
+svg .etiqueta-suave { font-size: 11px; fill: #4b5563; }
+svg .globo text { font-size: 11px; font-weight: 500; font-style: italic; }
+@media (prefers-reduced-motion: no-preference) {
+  @media screen { svg .ola { animation: ola 3.2s ease-in-out infinite alternate; } }
+}
+@keyframes ola { from { transform: translateX(-4px); } to { transform: translateX(4px); } }
+
+/* ---------- Capítulo completo ---------- */
+.capitulo-rotulo { margin: 0 0 4px; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12px; font-weight: 600; letter-spacing: .04em; color: var(--oro-oscuro); }
+.capitulo h1 { margin: 0 0 10px; font-size: 38px; line-height: 1.05; font-weight: 800; color: var(--morado); text-wrap: balance; }
+.capitulo .entrada { margin: 0 0 18px; font-size: 16px; color: #374151; max-width: 62ch; }
+.historia10 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 0 0 26px; }
+.cifra { padding: 14px; border: 1px solid var(--borde); border-radius: 12px; }
+.cifra .valor { font-size: 40px; line-height: 1; font-weight: 800; color: var(--morado); }
+.cifra .unidad { margin: 4px 0 6px; font-size: 13px; font-weight: 600; }
+.cifra .fuente { margin: 0; font-size: 11px; color: #4b5563; }
+.bloque { margin: 0 0 22px; padding: 14px 16px; border-radius: 12px; background: #f5f0fa; border-left: 4px solid var(--morado); }
+.bloque h3 { margin: 0 0 6px; font-size: 14px; letter-spacing: .06em; text-transform: uppercase; color: var(--morado); }
+.bloque ul { margin: 0; padding-left: 18px; font-size: 13.5px; }
+.transicion { margin: 0 0 8px; font-size: 15px; font-weight: 600; font-style: italic; color: var(--morado); }
+.puente { margin: 26px 0 0; padding: 14px 16px; border-radius: 12px; background: var(--oro); color: var(--tinta); font-weight: 700; font-size: 16px; }
+
+@media (max-width: 640px) {
+  .historia10 { grid-template-columns: 1fr; }
+  .capitulo h1 { font-size: 30px; }
+}
+@page { size: letter; margin: 0.5in; }
+@media print {
+  .pagina { max-width: none; padding: 0; }
+  .escena { margin-bottom: 14px; }
+}

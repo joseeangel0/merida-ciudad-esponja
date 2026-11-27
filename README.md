@@ -12,6 +12,7 @@ Proyecto colaborativo de visualización sobre la lluvia y el agua en Mérida, Yu
 
 | Qué | Dónde |
 |---|---|
+| **Booklet (entrega final)**: ficha, CSV por escena y 4 escenas en D3 | [`booklet/`](booklet/) · capítulo completo en `booklet/graficas/capitulo.html` |
 | **Dashboard interactivo** (lluvia por estación, ciclo anual, extremos, periodos de retorno, mapa) | [`subtema_1_precipitacion/dashboard/`](subtema_1_precipitacion/dashboard/) · publicado en https://joseeangel0.github.io/merida-ciudad-esponja/ |
 | **Catálogo de 27 fuentes** (matriz 9 categorías × 3) | [`subtema_1_precipitacion/catalogo_fuentes_precipitacion_merida.xlsx`](subtema_1_precipitacion/catalogo_fuentes_precipitacion_merida.xlsx) y [`fuentes_subtema1_precipitacion.csv`](subtema_1_precipitacion/fuentes_subtema1_precipitacion.csv) |
 | **Documento de fuentes** (fichas, hallazgos, visualizaciones) | [`subtema_1_precipitacion/documento/fuentes_precipitacion_merida.pdf`](subtema_1_precipitacion/documento/fuentes_precipitacion_merida.pdf) |

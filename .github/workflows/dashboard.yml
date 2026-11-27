@@ -5,6 +5,7 @@ on:
     branches: ["main"]
     paths:
       - "subtema_1_precipitacion/dashboard/**"
+      - "booklet/**"
       - ".github/workflows/dashboard.yml"
   workflow_dispatch:
 
@@ -23,9 +24,14 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions/configure-pages@v6
+      - name: Juntar dashboard y booklet
+        run: |
+          mkdir _sitio
+          cp -r subtema_1_precipitacion/dashboard/. _sitio/
+          cp -r booklet _sitio/booklet
       - uses: actions/upload-pages-artifact@v5
         with:
-          path: subtema_1_precipitacion/dashboard
+          path: _sitio
 
   deploy:
     needs: build

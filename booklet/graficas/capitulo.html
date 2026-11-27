@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cuando llueve en una ciudad plana · Capítulo 4</title>
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+  <main class="pagina capitulo">
+    <p class="capitulo-rotulo">CAPÍTULO 04 · LLUVIA · ACTO 4 · PLANA SOBRE EL AGUA</p>
+    <h1 id="titulo">Cuando llueve en una ciudad plana</h1>
+    <p class="entrada" id="entrada"></p>
+
+    <h2 class="capitulo-rotulo" style="margin-top:0">LA HISTORIA EN 10 SEGUNDOS</h2>
+    <div class="historia10" id="cifras"></div>
+
+    <p class="transicion">Esta es Espo. Espo es Mérida: una esponja que se moja según el calendario.</p>
+    <div id="escena-1"></div>
+    <p class="transicion">Pero la lluvia no siempre llega despacito: a veces cae de golpe, y Espo lo resiente.</p>
+    <div id="escena-2"></div>
+    <p class="transicion">Entonces, ¿cuánto aguanta Espo? Los reportes de calles inundadas lo cuentan.</p>
+    <div id="escena-3"></div>
+    <p class="transicion">Así se vio, día por día, la vez que Espo se saturó: el temporal de 2026.</p>
+    <div id="escena-4"></div>
+
+    <section class="bloque">
+      <h3>Lo que estos datos no dicen</h3>
+      <ul>
+        <li>Cada estación mide un punto. En una misma tormenta, estaciones a pocos kilómetros marcan cosas muy distintas, y el Centro no tiene estación propia.</li>
+        <li>El SMN entrega lluvia acumulada en 24 horas, no por hora: la intensidad solo existe para abril a junio de 2022, y no alcanza para contar una historia, así que la dejamos fuera.</li>
+        <li>Un reporte no es una inundación: cuenta quién llamó y cuándo, no cuánta agua hubo. Además, el Ayuntamiento no entregó 2023 y sus dos entregas pueden no contar igual; la escena 3 y la 4 usan solo la de 2024–2026.</li>
+        <li>Espo es una metáfora: no medimos cuánta agua absorbe Mérida. Lo que vemos es que los reportes se disparan cuando la lluvia del día pasa del umbral de aguacero fuerte, y son pocos días; no sabemos si el culpable es el drenaje, el relieve, la falta de suelo que absorba o que ahora se reporta más.</li>
+        <li>Quitamos meses con ceros falsos de las series del SMN; el detalle está en el reporte de calidad del repositorio.</li>
+        <li>Que Mérida sea plana no se mide aquí: es un dato del capítulo de relieve.</li>
+      </ul>
+    </section>
+
+    <p class="puente">Y el agua que no se queda en la calle, ¿por dónde se va? Eso lo cuentan el drenaje, el acuífero y la mancha urbana: el siguiente capítulo.</p>
+  </main>
+  <script src="d3.v7.9.0.min.js"></script>
+  <script src="comun.js"></script>
+  <script src="escena-1.js"></script>
+  <script src="escena-2.js"></script>
+  <script src="escena-3.js"></script>
+  <script src="escena-4.js"></script>
+  <script src="capitulo.js"></script>
+</body>
+</html>

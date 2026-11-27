@@ -1,7 +1,7 @@
 # Reglas del Workspace y Contexto del Proyecto
 
 ## Contexto del Proyecto: "Mérida, Ciudad Esponja"
-Este repositorio contiene el proyecto colaborativo para el sitio web de visualización sobre la lluvia y el agua en Mérida, Yucatán. El sitio cubre 9 subtemas y cuenta con un prototipo interactivo en HTML (`merida_ciudad_esponja_prototipo.html`).
+Este repositorio contiene el proyecto colaborativo para el sitio web de visualización sobre la lluvia y el agua en Mérida, Yucatán. El sitio cubre 9 subtemas; el entregable final del Equipo 1 es la carpeta `booklet/` (capítulo 04 del booklet, en D3).
 
 El foco principal de este espacio de trabajo es el **Subtema 1: Precipitación y eventos de lluvia**, ubicado en `subtema_1_precipitacion/`.
 
@@ -12,7 +12,7 @@ El foco principal de este espacio de trabajo es el **Subtema 1: Precipitación y
 
 ## Estructura del Repositorio
 ```text
-merida_ciudad_esponja_prototipo.html                 # Prototipo web interactivo (HTML + CSS + JS)
+booklet/                                             # ENTREGA FINAL del booklet: ficha.md, datos/ (CSV por escena) y graficas/ (D3)
 Precipitación y eventos de lluvia en Mérida.pdf     # Documento resumen ejecutivo
 subtema_1_precipitacion/
 ├── README.md                                        # Documentación del subtema
@@ -95,4 +95,4 @@ subtema_1_precipitacion/
 
 ### Pendientes Técnicos
 1. Automatizar/programar scraping del SMN (las estaciones automáticas borran registros después de 90 días).
-2. Conectar las series procesadas en `subtema_1_precipitacion/datos/07_Datos_propios/` con la interfaz de `merida_ciudad_esponja_prototipo.html`.
+2. (Hecho) El prototipo HTML se eliminó; las escenas finales están en `booklet/graficas/` y se regeneran sus CSV con `scripts/generar_booklet_datos.py`.

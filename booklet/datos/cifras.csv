@@ -1,0 +1,4 @@
+cifra,valor,unidad,fuente,fecha_corte,calculo
+lluvia_junio_octubre,75,% de la lluvia anual,"SMN/CONAGUA, estación 31044 Mérida (OBS), CLICOM",2026-09-25,Suma de los promedios mensuales 1991-2020 de junio a octubre entre la suma de los 12 meses (escena-1.csv)
+maxima_lluvia_24h,223,mm en un día,"SMN/CONAGUA, estación 31036 C.I.C.Y., CLICOM",2026-09-25,"Máximo diario de las 5 estaciones urbanas (2002-09-23, Huracán Isidoro); eventos_extraordinarios_>=100mm.csv"
+maximo_reportes_dia,322,reportes de calles inundadas en un día,"Ayuntamiento de Mérida, respuesta al folio 1190579126000596 (PNT)",2026-10-29,Día con más reportes de desagüe de calles inundadas en 2024-2026 (2026-06-01); solo origen = solicitud
